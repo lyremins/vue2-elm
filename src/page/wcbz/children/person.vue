@@ -13,9 +13,9 @@
 </template>
 
 <script>
+    import SheetList from 'src/components/header/SheetList'
     import headTop from 'src/components/header/head'
     import { getPersonnel,getPersonnelCount } from '../../../service/getData';
-    // import SheetList from 'src/components/header/SheetList'
     import mixin from '../../../mixin'
 
     export default {
@@ -31,7 +31,8 @@
         },
 
         components:{
-            headTop
+            headTop,
+            SheetList
         },
 
         computed:{
