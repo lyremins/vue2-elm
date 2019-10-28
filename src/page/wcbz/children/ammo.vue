@@ -14,7 +14,7 @@
 <script>
     import headTop from 'src/components/header/head'
     import { getAmmo,getAmmoCount } from '../../../service/getData';
-    import SheetList from 'src/components/common/SheetListAmmo.vue'
+    import SheetList from '../../../components/common/SheetListAmmo.vue'
     import mixin from '../../../mixin'
 
     export default {

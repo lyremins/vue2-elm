@@ -15,7 +15,7 @@
 <script>
     import headTop from 'src/components/header/head'
     import { getAirplane,getAirplaneCount } from '../../../service/getData';
-    import SheetList from 'src/components/common/SheetListAir.vue'
+    import SheetList from '../../../components/common/SheetListAir.vue'
     import mixin from '../../../mixin'
 
     export default {

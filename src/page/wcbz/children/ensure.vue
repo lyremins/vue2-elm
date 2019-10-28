@@ -14,7 +14,7 @@
 <script>
     import headTop from 'src/components/header/head'
     import { getEnsure,getEnsureCount } from '../../../service/getData';
-    import SheetList from 'src/components/common/SheetListEnsure.vue'
+    import SheetList from '../../../components/common/SheetListEnsure.vue'
     import mixin from '../../../mixin'
 
     export default {

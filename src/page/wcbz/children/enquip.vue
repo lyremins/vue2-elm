@@ -15,7 +15,7 @@
 <script>
     import headTop from 'src/components/header/head'
     import { getDevice,getDeviceCount } from '../../../service/getData';
-    import SheetList from 'src/components/common/SheetListEquip.vue'
+    import SheetList from '../../../components/common/SheetListEquip.vue'
     import mixin from '../../../mixin'
 
     export default {
