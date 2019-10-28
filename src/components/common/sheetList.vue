@@ -27,14 +27,14 @@
                 <p style="">重大任务：{{data_item.greatTask}}</p> -->
             </div>
 
-            <i  class="icon iconfont icon-switch" @click.stop="showSheetMenu()"></i>
-                </div>
+            <!-- <i  class="icon iconfont icon-switch" @click.stop="showSheetMenu()"></i>
+            </div> -->
         </div>
 </template>
 
 
 <script>
-    import 'src/style/css/iconfont.css'
+    // import 'src/style/css/iconfont.css'
     export default { 
         components: {},
          props: { 
