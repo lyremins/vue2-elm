@@ -65,7 +65,22 @@
                             name: '组织机构',
                             icon: 'asterisk',
                             link: 'organiz'
-                        }
+                        },
+                        airDevice: {
+                            name: '飞机-有寿器件',
+                            icon: 'ravelry',
+                            link: 'airplaneDevice'
+                        },
+                        airCar: {
+                            name: '飞机-保障车辆',
+                            icon: 'ravelry',
+                            link: 'airplaneCar'
+                        },
+                        airAmmo: {
+                            name: '飞机-弹药',
+                            icon: 'ravelry',
+                            link: 'airplaneAmmo'
+                        },
                     },
                 },
                 icon: 'plane',
@@ -115,7 +130,7 @@
             .list {
                 margin: 0.4rem;
                 text-align: center;
-                font-size: 32PX;
+                font-size: 22PX;
             }
         }
     }
