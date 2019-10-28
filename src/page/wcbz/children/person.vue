@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    import SheetList from 'src/components/header/SheetList'
+    import SheetList from '../../../components/common/sheetList'
     import headTop from 'src/components/header/head'
     import { getPersonnel,getPersonnelCount } from '../../../service/getData';
     import mixin from '../../../mixin'

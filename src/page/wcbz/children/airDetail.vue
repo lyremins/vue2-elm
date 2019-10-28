@@ -34,7 +34,7 @@
 <script>
     import headTop from 'src/components/header/head'
     import { getAirplaneById,updateAirplane } from '../../../service/getData';
-    import SheetList from '../../../components/common/SheetListAir.vue'
+    import SheetList from '../../../components/common/sheetListAir.vue'
     import mixin from '../../../mixin'
 
     export default {
