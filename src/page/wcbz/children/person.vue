@@ -15,7 +15,7 @@
 <script>
     import headTop from 'src/components/header/head'
     import { getPersonnel,getPersonnelCount } from '../../../service/getData';
-    import SheetList from 'src/omponents/common/SheetList.vue'
+    import SheetList from 'src/components/common/SheetList.vue'
     import mixin from '../../../mixin'
 
     export default {
