@@ -173,7 +173,7 @@
                     if (!this.loginWay) this.getCaptchaCode();
                 }else{
                     this.RECORD_USERINFO(this.userInfo);
-                    this.$router.go(-1);
+                    this.$router.push('index');
 
                 }
             },

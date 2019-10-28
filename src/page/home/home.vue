@@ -1,11 +1,11 @@
 <template>
   	<div>
         <head-top signin-up='home'>
-            <span slot='logo' class="head_logo"  @click="reload">ele.me</span>
+            <span slot='logo' class="head_logo"  @click="reload">cc</span>
         </head-top>
         <nav class="city_nav">
             <div class="city_tip">
-                <span>当前定位城市：</span>
+                <span>当前定城市：</span>
                 <span>定位不准时，请在城市列表中选择</span>
             </div>
             <router-link :to="'/city/' + guessCityid" class="guess_city">
@@ -55,6 +55,7 @@ export default {
     },
 
 	mounted(){
+        // this.$router.push('/index');
         // 获取当前城市
         cityGuess().then(res => {
             this.guessCity = res.name;

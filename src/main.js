@@ -4,8 +4,20 @@ import routes from './router/router'
 import store from './store/'
 import {routerMode} from './config/env'
 import './config/rem'
+import FastClick from 'fastclick'
+import { Progress,Field,Toast } from 'mint-ui';
+import 'mint-ui/lib/style.css';
+
+if ('addEventListener' in document) {
+    document.addEventListener('DOMContentLoaded', function() {
+        FastClick.attach(document.body);
+    }, false);
+}
 
 Vue.use(VueRouter)
+Vue.component(Progress.name, Progress);
+Vue.component(Field.name, Field);
+Vue.prototype.$toast = Toast;
 const router = new VueRouter({
 	routes,
 	mode: routerMode,

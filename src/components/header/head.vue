@@ -66,8 +66,9 @@
     .head_goback{
         left: 0.4rem;
         @include wh(0.6rem, 1rem);
-        line-height: 2.2rem;
+        line-height: 2.6rem;
         margin-left: .4rem;
+        vertical-align: middle;
     }
     .head_login{
         right: 0.55rem;

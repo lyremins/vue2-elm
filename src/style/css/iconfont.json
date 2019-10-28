@@ -1,0 +1,30 @@
+{
+  "id": "1439496",
+  "name": "dd",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1220965",
+      "name": "enter",
+      "font_class": "enter",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "6346002",
+      "name": "setup",
+      "font_class": "setup",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "7009018",
+      "name": "switch",
+      "font_class": "switch",
+      "unicode": "e72e",
+      "unicode_decimal": 59182
+    }
+  ]
+}
