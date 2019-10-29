@@ -10,7 +10,7 @@
         <div v-show="tab === 'plane'">
         <p>选择飞机：</p>
             <select class="select" v-model="airModel">
-                <option v-for="v in airPlaneData.data" :value="v.model">{{v.model}}</option>
+                <option v-for="v in airPlaneData.data" :value="v.code">{{v.code}}</option>
             </select>
             <p>选择飞机状态态势：</p>
             <select class="select" v-model="sModel">
@@ -111,7 +111,11 @@
         addFault,
         getFault,
         getPersonnel,
-        getPlan} from '../../../service/getData';
+        getPlan,
+        getAirplaneDevice,
+        getAirplaneAmmo,
+        updateAirplaneDevice,
+        updateAirplaneAmmo} from '../../../service/getData';
 
     export default {
     	data(){
@@ -167,7 +171,10 @@
                 pModel: '',
                 planData: {},
                 planName: '',
-                pObject: ''
+                pObject: '',
+                airPlaneDevice: '',
+                airPlaneAmmo: '',
+
             }
         },
 
@@ -221,7 +228,9 @@
                 this.vehicleData = await getVehicle();
                 this.personnelData = await getPersonnel();
                 this.planData = await getPlan();
-                const config = await getConfig()
+                const config = await getConfig();
+                this.airPlaneDevice = await getAirplaneDevice();
+                this.airPlaneAmmo = await getAirplaneAmmo();
                 this.stateModel = config.data[0].stateModel.split(",");
                 this.taskModel = config.data[0].taskModel.split(",");
 
@@ -239,23 +248,23 @@
             },
 
             async submit() {
-                console.log(this.airModel);
-                console.log(this.sModel);
-                console.log(this.tModel);
-                console.log(this.vehicleName);
-                console.log(this.toolData);
+                // console.log(this.airModel);
+                // console.log(this.sModel);
+                // console.log(this.tModel);
+                // console.log(this.vehicleName);
+                // console.log(this.toolData);
 
-                this.airPlaneData.data.forEach(element => {
-                    console.log(element.model);
-                    if (element.model === this.airModel) {
-                        element['state'] = this.sModel;
-                        element['task'] = this.tModel;
-                        element['airUpOrDown'] = this.airUpOrDown;
-                        element['airTime'] = this.airTime;
-                        element['airHour'] = this.airHour;
-                        this.submitData(element);
-                    }
-                });
+                // this.airPlaneData.data.forEach(element => {
+                //     console.log(element.model);
+                //     if (element.model === this.airModel) {
+                //         element['state'] = this.sModel;
+                //         element['task'] = this.tModel;
+                //         element['airUpOrDown'] = this.airUpOrDown;
+                //         element['airTime'] = this.airTime;
+                //         element['airHour'] = this.airHour;
+                //         this.submitData(element);
+                //     }
+                // });
 
                 // this.vehicleData.data.forEach(element => {
                 //     if (element.name === this.vehicleName) {
@@ -266,12 +275,33 @@
                 //     }
                 // });
 
-                if (this.faultData) {
-                    const res = await addFault(this.faultData);
+                // if (this.faultData) {
+                //     const res = await addFault(this.faultData);
+                // }
+                console.log(this.airModel);
+                console.log(this.airHour);
+                const newAirPlane = [];
+                this.airPlaneDevice.data.forEach(element => {
+                    if (this.airModel === element.air_code) {
+                        element.sm = parseInt(element.sm) - parseInt(this.airHour);
+                        newAirPlane.push({
+                            airplaneDevice_id: element.airplaneDevice_id,
+                            air_code: element.air_code,
+                            sm: element.sm
+                        });
+                    }
+                });
+                console.log(newAirPlane);
+                // newAirPlane.forEach(element => {
+                //     updateAirplaneDevice(element);
+                // });
+                for (let iterator of newAirPlane) {
+                    const res = await updateAirplaneDevice(iterator);
+                    console.log(res);
                 }
 
-                this.showAlert = true;
-                this.alertText = '上报成功';
+                // this.showAlert = true;
+                // this.alertText = '上报成功';
                 // this.$router.push('situation');
 
             },

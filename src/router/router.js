@@ -78,6 +78,9 @@ const carDetail= r => require.ensure([], () => r(require('../page/wcbz/children/
 const airplaneDevice= r => require.ensure([], () => r(require('../page/wcbz/children/airplaneDevice')), 'airplaneDevice')
 const airplaneAmmo= r => require.ensure([], () => r(require('../page/wcbz/children/airplaneAmmo')), 'airplaneAmmo')
 const airplaneCar= r => require.ensure([], () => r(require('../page/wcbz/children/airplaneCar')), 'airplaneCar')
+const showAirplaneDevice= r => require.ensure([], () => r(require('../page/wcbz/children/showAirplaneDevice')), 'showAirplaneDevice')
+const showAirplaneAmmo= r => require.ensure([], () => r(require('../page/wcbz/children/showAirplaneAmmo')), 'showAirplaneAmmo')
+const showAirplaneCar= r => require.ensure([], () => r(require('../page/wcbz/children/showAirplaneCar')), 'showAirplaneCar')
 
 
 export default [{
@@ -415,6 +418,18 @@ export default [{
         {
             path: 'airplaneCar',
             component: airplaneCar
+        },
+        {
+            path: 'showAirplaneDevice',
+            component: showAirplaneDevice
+        },
+        {
+            path: 'showAirplaneAmmo',
+            component: showAirplaneAmmo
+        },
+        {
+            path: 'showAirplaneCar',
+            component: showAirplaneCar
         },
     ]
 }]

@@ -3,16 +3,18 @@
         <head-top head-title="飞机-有售器件关联" go-back='true'>
         </head-top>
         <div class="radioBox" v-for="(value,index) in airPlaneData.data">
-            <input class="radio" @change="changeSelect(index,value.isCheck)" v-model="value.isCheck" type="checkbox" :id="index" />
+        <input class="radio" @change="changeSelect(index,value.isCheck)" v-model="air[index]" type="checkbox" :id="index" />
             <label :for="index">飞机编号：{{value.code}}</label>
             <div class="showDevice" v-show="value.isCheck">
-                <div v-for="(value,index) in deviceData.data">
-                    <input class="radio" type="checkbox" :id="index" />
-                    <label :for="index">有售器件编号：{{value.filed1}}</label>
+                <div v-for="(v,i) in value.device">
+                    {{v.isCheck}}
+                    <input @change="changeDevice(i,v.isCheck)" class="radio" type="checkbox" :id="i"  />
+                    <label :for="i">有售器件编号：{{v.filed1}}</label>
                 </div>
             </div>
         </div>
         <button @click="save()">保存信息</button>
+        <button @click="show()">查看关联信息</button>
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
         <foot-guide></foot-guide>
     </div>
@@ -64,7 +66,11 @@
                 checked: false,
                 subitem: {
                     isCheck: false
-                }
+                },
+                air: [],
+                newData: [],
+                device: [],
+                airplaneIndex: ''
             }
         },
 
@@ -84,34 +90,87 @@
 
         methods: {
             async save() {
-                console.log(this.formData)
-                let result = await addAirplane(this.formData);
-                if (result.status == 1) {
+                this.newData = [];
+                // this.air.forEach((element,index) => {
+                //     if (element === true) {
+                //         console.log('1111');
+                //         data = {
+                //             name: this.airPlaneData.data[index].code,
+                //         }
+                //         console.log(data);
+                //     }
+                //     this.newData.push(data);
+                // });
+                this.airPlaneData.data.forEach((elements,index) => {
+                    let data = [];
+                    if (elements.isCheck) {
+                        elements.device.forEach(element => {
+                            if (element.isCheck) {
+                                let l = {
+                                    air_code: elements.code,
+                                    device_code:  element.filed1,
+                                    zsm:  element.filed6,
+                                    sm:  element.filed6,
+                                    yz: element.filed7
+                                }
+                                data.push(l)
+                            }
+                        });
+                        this.newData.push(data);
+                    }
+                });
+                console.log(this.newData);
+                // this.newData.forEach(elements => {
+                //     elements.forEach(element => {
+                //         addAirplaneDevice(element);
+                //     });
+                // });
+                for (let iterator of this.newData) {
+                    for (let x of iterator) {
+                        const res = await addAirplaneDevice(x);
+                        console.log(res);
+                    }
+                    // const res = await addAirplaneDevice(iterator);
+                    // console.log(res);
+                }
                     this.showAlert = true;
                     this.alertText = '添加成功';
-                    this.$router.push('/airplane');
-                } else {
-                    this.$message({
-                        type: 'error',
-                        message: result.message
-                    });
-                    this.showAlert = true;
-                    this.alertText = result.message;
-                }
+                // let result = addAirplaneDevice(this.formData);
+                // if (result.status == 1) {
+                //     this.showAlert = true;
+                //     this.alertText = '添加成功';
+                //     this.$router.push('/airplane');
+                // } else {
+                //     this.$message({
+                //         type: 'error',
+                //         message: result.message
+                //     });
+                //     this.showAlert = true;
+                //     this.alertText = result.message;
+                // }
                 console.log(result)
             },
             closeTip() {
                 this.showAlert = false;
             },
             async init() {
-                this.airPlaneData = await getAirplane()
+                this.airPlaneData = await getAirplane();
                 this.deviceData = await getDevice();
                 this.airPlaneData.data.forEach(elements => {
+                    elements.isCheck = false;
                     let data = [];
                     this.deviceData.data.forEach(element => {
-                        elements.push(element);
+                        element.isCheck = false;
+                        data.push(Object.assign({},element));
                     });
+                    elements.device = Object.assign([],data);
                 });
+                // this.airPlaneData.data.forEach(elements => {
+                //     let data = [];
+                //     this.deviceData.data.forEach(element => {
+                //         elements.push(element);
+                //     });
+                // });
                 console.log(this.airPlaneData.data);
             },
             selectOrganiz(name) {
@@ -120,10 +179,19 @@
                 this.showOrganiz = false;
             },
             changeSelect(index,type) {
-                console.log(index,type);
-                this.airPlaneData.data[index].isCheck = type;
+                this.airplaneIndex = index;
+                this.airPlaneData.data[index].isCheck = !this.airPlaneData.data[index].isCheck;
                 this.airPlaneData.data = Object.assign([],this.airPlaneData.data)
-                console.log(this.airPlaneData.data[index]);
+            },
+            changeDevice(index,type) {
+                console.log(this.airPlaneData.data[this.airplaneIndex].device[0].isCheck);
+                console.log(this.airPlaneData.data[this.airplaneIndex].device[1].isCheck);
+                this.airPlaneData.data[this.airplaneIndex].device[index].isCheck = !this.airPlaneData.data[this.airplaneIndex].device[index].isCheck;
+                // this.airPlaneData.data = Object.assign([],this.airPlaneData.data);
+                console.log(this.airPlaneData.data);
+            },
+            show() {
+                this.$router.push('showAirplaneDevice');
             }
         }
     }

@@ -7,7 +7,7 @@
                 <input type="text" placeholder="任务名称" name="filed6" v-model="formData.filed6">
             </section>
             <section class="input_container">
-                <input type="text" placeholder="保障日期" name="filed1" v-model="formData.filed1">
+                <mt-field label="保障日期" placeholder="保障日期" type="date" v-model="formData.filed1"></mt-field>
             </section>
             <div class="deviceBox">
                 <p class="seText">保障类型：</p>
@@ -15,23 +15,37 @@
                     <option v-for="v in bzType" :value="v">{{v}}</option>
                 </select>
             </div>
+            {{formData}}
             <div class="deviceBox">
-                <p class="seText">保障车辆：</p>
-                <select class="select" v-model="formData.filed3">
-                    <option v-for="v in bzCar" :value="v">{{v}}</option>
-                </select>
+                <p class="seText">保障车辆选择：</p>
+                <div v-for="v in carList.data" :value="v.name">
+                    <input v-model="formData.filed3" :value="v.name"  class="radio" type="checkbox" :id="i"  />
+                    <label :for="i">保障车辆：{{v.name}}</label>
+                </div>
+                <!-- <select class="select" v-model="formData.filed3">
+                    <option v-for="v in carList.data" :value="v.name">{{v.name}}</option>
+                </select> -->
             </div>
             <div class="deviceBox">
-                <p class="seText">保障人员：</p>
+                <p class="seText">人员选择：</p>
+                <div v-for="v in bzPerson.data" :value="v.name">
+                    <input v-model="formData.filed4" :value="v.user_name"   class="radio" type="checkbox" :id="i"  />
+                    <label :for="i">保障人员：{{v.user_name}}</label>
+                </div>
+                <!-- <p class="seText">保障人员：</p>
                 <select class="select" v-model="formData.filed4">
                     <option v-for="v in bzPerson.data" :value="v.user_name">{{v.user_name}}</option>
-                </select>
+                </select> -->
             </div>
             <div class="deviceBox">
                 <p class="seText">飞行计划：</p>
-                <select class="select" v-model="formData.filed5">
-                    <option v-for="v in planData.data" :value="v.name">{{v.name}}</option>
-                </select>
+                <div v-for="v in airPlaneData.data" :value="v.name">
+                    <input v-model="formData.filed5" :value="v.code"   class="radio" type="checkbox" :id="i"  />
+                    <label :for="i">飞机：{{v.code}}</label>
+                </div>
+                <!-- <select class="select" v-model="formData.filed5">
+                    <option v-for="v in airPlaneData.data" :value="v.code">{{v.code}}</option>
+                </select> -->
             </div>
             <div class="deviceBox">
             <p class="seText">输入进场时间：</p>
@@ -55,7 +69,9 @@
         addEnsure,
         getConfig,
         getPersonnel,
-        getPlan
+        getPlan,
+        getVehicle,
+        getAirplane
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
     import mixin from '../../../mixin'
@@ -66,9 +82,9 @@
                 formData: {
                     filed1: '',
                     filed2: '',
-                    filed3: '',
-                    filed4: '',
-                    filed5: '',
+                    filed3: [],
+                    filed4: [],
+                    filed5: [],
                     filed6: '',
                     filed7: '',
                     filed8: ''
@@ -78,7 +94,9 @@
                 bzType: [],
                 bzCar: [],
                 bzPerson: {},
-                planData: {}
+                planData: {},
+                carList: {},
+                airPlaneData: {}
             }
         },
         mixins: [mixin],
@@ -138,7 +156,9 @@
                     }
             },
             async init() {
+                this.airPlaneData = await getAirplane();
                 const config = await getConfig()
+                this.carList = await getVehicle();
                 this.bzType = config.data[0].ensureModel.split(",");
                 this.bzCar = config.data[0].carTypeModel.split(",");
                 this.bzPerson = await getPersonnel();
@@ -166,7 +186,7 @@
         }
         .seText {
             display: inline-block;
-            padding: .6rem .8rem;
+            padding: 0 .8rem;
             @include sc(.7rem, #666);
         }
         .selectBox {
@@ -176,6 +196,11 @@
                     background-color: #eee;
                     font-size: 14PX;
                     padding: 0.5rem;
+            }
+        }
+        .deviceBox {
+            div {
+                padding-left: 40px;
             }
         }
         // .deviceBox {

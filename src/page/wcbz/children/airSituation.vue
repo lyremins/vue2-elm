@@ -2,24 +2,27 @@
   	<div class="city_container">
         <head-top head-title="飞机状态" go-back='true'>
         </head-top>
+        <p class="title1">参加计划的飞机：</p>
         <div class="box">
             <div @click="toflyDetail(value.airplane_id)" class="boxData" v-for="(value,index) in airPlaneData.data" v-if="index !== '__v'">
-                <p>{{value.code}}</p>
-                <i class="fa fa-fighter-jet"></i>
-                <span class="icon iconTsk" :class="{'wh': value.state === '完好',
-                                        'fault': value.state === '定检' ||
-                                        value.state === '大修' ||
-                                        value.state === '排故',
-                                        'try': value.state === '试飞' ||
-                                        value.state === '待退役'}">{{value.state}}</span>
-                <p>起落次数：{{value.airUpOrDown}}</p>
-                <div v-show="nowIndex === value.airplane_id" class="floatBox">
-                    <p style="">飞机型号：{{value.code}}</p>
-                    <p style="">部队编号：{{value.army_id}}</p>
-                    <p style="">单位：{{value.unit}}</p>
-                    <p style="">起落：{{value.stageUpOrDown}}</p>
-                    <p style="">时长：{{value.airHour}}</p>
-            </div>
+                <div>
+                    <p>{{value.code}}</p>
+                    <i class="fa fa-fighter-jet"></i>
+                    <span class="icon iconTsk" :class="{'wh': value.state === '完好',
+                                            'fault': value.state === '定检' ||
+                                            value.state === '大修' ||
+                                            value.state === '排故',
+                                            'try': value.state === '试飞' ||
+                                            value.state === '待退役'}">{{value.state}}</span>
+                    <p>起落次数：{{value.airUpOrDown}}</p>
+                    <div v-show="nowIndex === value.airplane_id" class="floatBox">
+                        <p style="">飞机型号：{{value.code}}</p>
+                        <p style="">部队编号：{{value.army_id}}</p>
+                        <p style="">单位：{{value.unit}}</p>
+                        <p style="">起落：{{value.stageUpOrDown}}</p>
+                        <p style="">时长：{{value.airHour}}</p>
+                    </div>
+                </div>
             </div>
         </div>
         <button @click="toPlan()" class="more">上报飞机状态</button>
@@ -101,6 +104,7 @@
                 carJcNumber: 0,
                 carBzNumber: 0,
                 nowIndex: '',
+                mapLists: {}
             }
         },
 
@@ -141,6 +145,15 @@
                     }
                 });
                 this.ensureData = await getEnsure();
+                this.planData.data.forEach((element,index) => {
+                    element.isShow = false;
+                    this.mapLists[element.airName] || (this.mapLists[element.airName] = []);
+                    this.mapLists[element.airName].push(element);
+                });
+                console.log(this.mapLists);
+                Object.keys(this.mapLists).forEach((key) => {
+                    console.log(key);
+                });
             },
             airSelect(event) {
                 this.airname = event.target.value;
@@ -234,6 +247,7 @@
             flex-direction: row;
             flex-wrap: wrap;
             margin-bottom: 0.4rem;
+            justify-content: space-between;
             .boxData {
                 position: relative;
             }
@@ -253,7 +267,7 @@
             }
             p {
                 font-size: 16PX;
-                text-align: left;
+                text-align: center;
             }
             .floatBox {
                 position: absolute;
@@ -306,6 +320,11 @@
             width: 100%;
             background-color: #3190e8;
             color: #fff;
+        }
+        .title1 {
+            text-align: center;
+            font-size: 12PX;
+            padding: 10PX;
         }
     }
 

@@ -15,7 +15,7 @@
                 <p style="">保障类型：{{data_item.filed2}}</p>
                 <p style="">保障车辆：{{data_item.filed3}}</p>
                 <p style="">保障人员：{{data_item.filed4}}</p>
-                <p style="">飞行计划：{{data_item.filed5}}</p>
+                <p style="">飞机型号：{{data_item.filed5}}</p>
                 <p style="">进场时间：{{data_item.filed7}}</p>
                 <p style="">总人数：{{data_item.filed8}}</p>
 

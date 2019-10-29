@@ -1,21 +1,23 @@
 <template>
     <div class="city_container">
-        <head-top head-title="飞机-弹药关联" go-back='true'>
+        <head-top head-title="飞机-有售器件关联" go-back='true'>
         </head-top>
-
-        <div class="radioBox" v-for="(value,index) in airPlaneData.data">
-        <input class="radio" @change="changeSelect(index,value.isCheck)" v-model="air[index]" type="checkbox" :id="index" />
-            <label :for="index">飞机编号：{{value.code}}</label>
-            <div class="showDevice" v-show="value.isCheck">
-                <div v-for="(v,i) in value.device">
-                    {{v.isCheck}}
-                    <input :value="v" @change="changeDevice(i,v.isCheck)" class="radio" type="checkbox" :id="i"  />
-                    <label :for="i">弹药编号：{{v.filed1}}</label>
-                </div>
-            </div>
+        <div>
+            <table>
+                <tr>
+                    <td>名称</td>
+                    <td>总寿命</td>
+                    <td>余寿</td>
+                    <td>操作</td>
+                </tr>
+                <tr v-for="v in airPlaneData.data">
+                    <td>{{v.air_code}}_{{v.device_code}}</td>
+                    <td>{{v.zsm}}</td>
+                    <td>{{v.sm}} </td>
+                    <td><span @click="changeNew(v)" class="changeButton" v-show="v.sm <=0">更换</span></td>
+                </tr>
+            </table>
         </div>
-        <button @click="save()">保存信息</button>
-        <button @click="show()">查看关联信息</button>
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
         <foot-guide></foot-guide>
     </div>
@@ -25,9 +27,8 @@
     import headTop from 'src/components/header/head'
     import alertTip from 'src/components/common/alertTip'
     import {
-        addAirplaneAmmo,
-        getAirplane,
-        getAmmo
+        getAirplaneDevice,
+        updateAirplaneDevice
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
     import footGuide from 'src/components/footer/footer'
@@ -90,79 +91,11 @@
         },
 
         methods: {
-            save() {
-                this.newData = [];
-                let data = [];
-                // this.air.forEach((element,index) => {
-                //     if (element === true) {
-                //         console.log('1111');
-                //         data = {
-                //             name: this.airPlaneData.data[index].code,
-                //         }
-                //         console.log(data);
-                //     }
-                //     this.newData.push(data);
-                // });
-                console.log("2222", this.airPlaneData);
-                this.airPlaneData.data.forEach((elements,index) => {
-                    if (elements.isCheck) {
-                        elements.device.forEach(element => {
-                            if (element.isCheck) {
-                                let l = {
-                                    air_code: elements.code,
-                                    ammo_code:  element.filed1,
-                                }
-                                data.push(l)
-                            }
-                        });
-                        this.newData.push(data);
-                    }
-                });
-                console.log(this.newData);
-                this.newData.forEach(elements => {
-                    elements.forEach(element => {
-                        addAirplaneAmmo(element);
-                    });
-                });
-                    this.showAlert = true;
-                    this.alertText = '添加成功';
-                // let result = addAirplaneDevice(this.formData);
-                // if (result.status == 1) {
-                //     this.showAlert = true;
-                //     this.alertText = '添加成功';
-                //     this.$router.push('/airplane');
-                // } else {
-                //     this.$message({
-                //         type: 'error',
-                //         message: result.message
-                //     });
-                //     this.showAlert = true;
-                //     this.alertText = result.message;
-                // }
-                console.log(result)
-            },
             closeTip() {
                 this.showAlert = false;
             },
             async init() {
-                this.airPlaneData = await getAirplane();
-                this.deviceData = await getAmmo();
-                this.airPlaneData.data.forEach(elements => {
-                    elements.isCheck = false;
-                    let data = [];
-                    this.deviceData.data.forEach(element => {
-                        element.isCheck = false;
-                        data.push(Object.assign({},element));
-                    });
-                    elements.device = data;
-                });
-                // this.airPlaneData.data.forEach(elements => {
-                //     let data = [];
-                //     this.deviceData.data.forEach(element => {
-                //         elements.push(element);
-                //     });
-                // });
-                console.log(this.airPlaneData.data);
+                this.airPlaneData = await getAirplaneDevice();
             },
             selectOrganiz(name) {
                 console.log(name);
@@ -170,19 +103,24 @@
                 this.showOrganiz = false;
             },
             changeSelect(index,type) {
-                console.log(index)
                 this.airplaneIndex = index;
                 this.airPlaneData.data[index].isCheck = !this.airPlaneData.data[index].isCheck;
                 this.airPlaneData.data = Object.assign([],this.airPlaneData.data)
             },
             changeDevice(index,type) {
-                console.log("5555", this.airPlaneData.data);
                 this.airPlaneData.data[this.airplaneIndex].device[index].isCheck = !this.airPlaneData.data[this.airplaneIndex].device[index].isCheck;
                 this.airPlaneData.data = Object.assign([],this.airPlaneData.data);
-                // console.log("6666", this.airPlaneData.data);
+                console.log(this.airPlaneData.data);
             },
-            show() {
-                this.$router.push('airplaneAmmo');
+            changeNew(value) {
+                console.log(value);
+                const newData = {
+                    airplaneDevice_id: value.airplaneDevice_id,
+                    sm: value.zsm
+                }
+                const res = updateAirplaneDevice(newData);
+                this.showAlert = true;
+                this.alertText = '更换成功';
             }
         }
     }
@@ -234,6 +172,24 @@
         .showDevice {
             margin-left: 40PX;
         }
+            table {
+                text-align: center;
+                border: 1px solid #000;
+                border-collapse: collapse;
+                font-size: 12PX;
+                th {
+                    border-collapse: collapse;
+                }
+                td {
+                    border: 1px solid #000;
+                    width: 5rem;
+                }
+            }
+            .changeButton {
+                padding: 5px;
+                background-color: red;
+                color: #fff;
+            }
     }
 
     .loginForm {
