@@ -1,6 +1,6 @@
 <template>
   	<div class="city_container">
-        <head-top head-title="组织架构管理" go-back='true'>
+        <head-top v-show="device !== 'h5'" head-title="组织架构管理" go-back='true'>
 
         </head-top>
         <div class="list" v-for="v in organizData.data">
@@ -28,7 +28,7 @@
                 </div> -->
             </div>
         </div>
-        <footGuide></footGuide>
+        <footGuide :device="device"></footGuide>
     </div>
 </template>
 
@@ -43,7 +43,9 @@
                 organizData: {},
                 showChild1: false,
                 showChild2: true,
-                showChild3: true
+                showChild3: true,
+                device: this.$util.getUrlKey('device')
+
             }
         },
 

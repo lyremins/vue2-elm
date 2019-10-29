@@ -5,6 +5,7 @@ import store from './store/'
 import {routerMode} from './config/env'
 import './config/rem'
 import FastClick from 'fastclick'
+import * as util from './util';
 import { Progress,Field,Toast,Popup } from 'mint-ui';
 import 'mint-ui/lib/style.css';
 
@@ -19,6 +20,7 @@ Vue.component(Progress.name, Progress);
 Vue.component(Field.name, Field);
 Vue.component(Popup.name, Popup);
 Vue.prototype.$toast = Toast;
+Vue.prototype.$util = util;
 const router = new VueRouter({
 	routes,
 	mode: routerMode,
