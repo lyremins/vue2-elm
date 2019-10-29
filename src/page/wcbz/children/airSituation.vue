@@ -5,22 +5,67 @@
         <p class="title1">参加计划的飞机：</p>
         <div class="box">
             <div @click="toflyDetail(value.airplane_id)" class="boxData" v-for="(value,index) in airPlaneData.data" v-if="index !== '__v'">
-                <div>
-                    <p>{{value.code}}</p>
-                    <i class="fa fa-fighter-jet"></i>
-                    <span class="icon iconTsk" :class="{'wh': value.state === '完好',
-                                            'fault': value.state === '定检' ||
-                                            value.state === '大修' ||
-                                            value.state === '排故',
-                                            'try': value.state === '试飞' ||
-                                            value.state === '待退役'}">{{value.state}}</span>
-                    <p>起落次数：{{value.airUpOrDown}}</p>
-                    <div v-show="nowIndex === value.airplane_id" class="floatBox">
-                        <p style="">飞机型号：{{value.code}}</p>
-                        <p style="">部队编号：{{value.army_id}}</p>
-                        <p style="">单位：{{value.unit}}</p>
-                        <p style="">起落：{{value.stageUpOrDown}}</p>
-                        <p style="">时长：{{value.airHour}}</p>
+                <div v-for="v in planIndex ">
+                    <div v-show="value.code === v && value.enter === '已进场'">
+                        <p>已进场：{{value.code}}</p>
+                        <i class="fa fa-fighter-jet"></i>
+                        <span class="icon iconTsk" :class="{'wh': value.state === '完好',
+                                                'fault': value.state === '定检' ||
+                                                value.state === '大修' ||
+                                                value.state === '排故',
+                                                'try': value.state === '试飞' ||
+                                                value.state === '待退役'}">{{value.state}}</span>
+                        <p>起落次数：{{value.airUpOrDown}}</p>
+                        <div v-show="nowIndex === value.airplane_id" class="floatBox">
+                            <p style="">飞机型号：{{value.code}}</p>
+                            <p style="">部队编号：{{value.army_id}}</p>
+                            <p style="">单位：{{value.unit}}</p>
+                            <p style="">起落：{{value.stageUpOrDown}}</p>
+                            <p style="">时长：{{value.airHour}}</p>
+                        </div>
+                    </div>
+                    <div v-show="value.code === v && (!value.enter || value.enter === '未进场') ">
+                        <p>未进场：{{value.code}}</p>
+                        <i class="fa fa-fighter-jet"></i>
+                        <span class="icon iconTsk" :class="{'wh': value.state === '完好',
+                                                'fault': value.state === '定检' ||
+                                                value.state === '大修' ||
+                                                value.state === '排故',
+                                                'try': value.state === '试飞' ||
+                                                value.state === '待退役'}">{{value.state}}</span>
+                        <p>起落次数：{{value.airUpOrDown}}</p>
+                        <div v-show="nowIndex === value.airplane_id" class="floatBox">
+                            <p style="">飞机型号：{{value.code}}</p>
+                            <p style="">部队编号：{{value.army_id}}</p>
+                            <p style="">单位：{{value.unit}}</p>
+                            <p style="">起落：{{value.stageUpOrDown}}</p>
+                            <p style="">时长：{{value.airHour}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="title1">未计划的飞机：</p>
+        <div class="box">
+            <div @click="toflyDetail(value.airplane_id)" class="boxData" v-for="(value,index) in airPlaneData.data" v-if="index !== '__v'">
+                <div v-for="v in planIndex ">
+                    <div v-show="value.code != v">
+                        <p>{{value.code}}</p>
+                        <i class="fa fa-fighter-jet"></i>
+                        <span class="icon iconTsk" :class="{'wh': value.state === '完好',
+                                                'fault': value.state === '定检' ||
+                                                value.state === '大修' ||
+                                                value.state === '排故',
+                                                'try': value.state === '试飞' ||
+                                                value.state === '待退役'}">{{value.state}}</span>
+                        <p>起落次数：{{value.airUpOrDown}}</p>
+                        <div v-show="nowIndex === value.airplane_id" class="floatBox">
+                            <p style="">飞机型号：{{value.code}}</p>
+                            <p style="">部队编号：{{value.army_id}}</p>
+                            <p style="">单位：{{value.unit}}</p>
+                            <p style="">起落：{{value.stageUpOrDown}}</p>
+                            <p style="">时长：{{value.airHour}}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -104,11 +149,17 @@
                 carJcNumber: 0,
                 carBzNumber: 0,
                 nowIndex: '',
-                mapLists: {}
+                mapLists: {},
+                dayTime: '',
+                planIndex: [],
+                newData: []
             }
         },
 
         mounted(){
+            var day2 = new Date();
+            day2.setTime(day2.getTime());
+            this.dayTime = day2.getFullYear()+"-" + (day2.getMonth()+1) + "-" + day2.getDate();
             this.initData();
         },
         mixins: [mixin],
@@ -147,13 +198,22 @@
                 this.ensureData = await getEnsure();
                 this.planData.data.forEach((element,index) => {
                     element.isShow = false;
-                    this.mapLists[element.airName] || (this.mapLists[element.airName] = []);
-                    this.mapLists[element.airName].push(element);
+                    if (element.dateTime === this.dayTime) {
+                        this.mapLists[element.airName] || (this.mapLists[element.airName] = []);
+                        this.mapLists[element.airName].push(element);
+                    }
                 });
-                console.log(this.mapLists);
+                console.log("1222", this.planData.data);
                 Object.keys(this.mapLists).forEach((key) => {
-                    console.log(key);
+                    this.planIndex.push(key);
                 });
+                // this.planIndex.forEach(elements => {
+                //     this.airPlaneData.data.forEach(element => {
+                //         if (elements === element.code) {
+                //             data
+                //         }
+                //     });
+                // });
             },
             airSelect(event) {
                 this.airname = event.target.value;
@@ -191,7 +251,7 @@
             },
             toflyDetail(id) {
                 this.nowIndex = id;
-                // this.$router.push('airDetail?id='+id);
+                this.$router.push('airDetail?id='+id);
             },
             toPlan() {
                 this.$router.push('showPlan');
@@ -322,7 +382,7 @@
             color: #fff;
         }
         .title1 {
-            text-align: center;
+            text-align: left;
             font-size: 12PX;
             padding: 10PX;
         }

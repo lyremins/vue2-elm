@@ -15,7 +15,6 @@
                     <option v-for="v in bzType" :value="v">{{v}}</option>
                 </select>
             </div>
-            {{formData}}
             <div class="deviceBox">
                 <p class="seText">保障车辆选择：</p>
                 <div v-for="v in carList.data" :value="v.name">

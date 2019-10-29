@@ -20,6 +20,10 @@
             <select class="select" v-model="tModel">
                 <option v-for="v in taskModel" :value="v">{{v}}</option>
             </select>
+            <p>选择飞机进场状态：</p>
+            <select class="select" v-model="enter">
+                <option v-for="v in enterState" :value="v">{{v}}</option>
+            </select>
             <p>填写起落次数：</p>
             <input v-model="airUpOrDown" placeholder="起落次数" class="select" type="text">
             <p>填写起落时间：</p>
@@ -47,7 +51,11 @@
                 <select class="select" v-model="carTask">
                     <option v-for="v in catTaskModel" :value="v">{{v}}</option>
                 </select>
-            </div>
+                <p>选择车辆进场状态：</p>
+                <select class="select" v-model="carEnter">
+                    <option v-for="v in enterState" :value="v">{{v}}</option>
+                </select>
+                </div>
         </div>
         <div v-show="tab === 'users'">
             <p>人员选择：</p>
@@ -129,6 +137,10 @@
                 taskModel: [],
                 deviceModel: [
                 ],
+                enterState: [
+                    '进场',
+                    '未进场'
+                ],
                 catTaskModel: [],
                 toolData: '',
                 carTask: '',
@@ -174,6 +186,8 @@
                 pObject: '',
                 airPlaneDevice: '',
                 airPlaneAmmo: '',
+                enter: '',
+                carEnter: ''
 
             }
         },
@@ -248,38 +262,34 @@
             },
 
             async submit() {
-                // console.log(this.airModel);
-                // console.log(this.sModel);
-                // console.log(this.tModel);
-                // console.log(this.vehicleName);
-                // console.log(this.toolData);
 
-                // this.airPlaneData.data.forEach(element => {
-                //     console.log(element.model);
-                //     if (element.model === this.airModel) {
-                //         element['state'] = this.sModel;
-                //         element['task'] = this.tModel;
-                //         element['airUpOrDown'] = this.airUpOrDown;
-                //         element['airTime'] = this.airTime;
-                //         element['airHour'] = this.airHour;
-                //         this.submitData(element);
-                //     }
-                // });
+                this.airPlaneData.data.forEach(element => {
+                    console.log(element.model);
+                    if (element.code === this.airModel) {
+                        element['state'] = this.sModel;
+                        element['task'] = this.tModel;
+                        element['airUpOrDown'] = this.airUpOrDown;
+                        element['airTime'] = this.airTime;
+                        element['airHour'] = this.airHour;
+                        element['enter'] = this.enter;
+                        this.submitData(element);
+                    }
+                });
 
-                // this.vehicleData.data.forEach(element => {
-                //     if (element.name === this.vehicleName) {
-                //         element['state'] = this.toolData;
-                //         element['taskState'] = this.carTask;
-                //         console.log(element);
-                //         this.submitVehicleData(element);
-                //     }
-                // });
+                this.vehicleData.data.forEach(element => {
+                    if (element.name === this.vehicleName) {
+                        element['state'] = this.toolData;
+                        element['taskState'] = this.carTask;
+                        element['enter'] = this.carEnter;
+                        console.log(element);
+                        this.submitVehicleData(element);
+                    }
+                });
 
-                // if (this.faultData) {
-                //     const res = await addFault(this.faultData);
-                // }
-                console.log(this.airModel);
-                console.log(this.airHour);
+                if (this.faultData) {
+                    const res = await addFault(this.faultData);
+                }
+
                 const newAirPlane = [];
                 this.airPlaneDevice.data.forEach(element => {
                     if (this.airModel === element.air_code) {
@@ -291,18 +301,16 @@
                         });
                     }
                 });
-                console.log(newAirPlane);
-                // newAirPlane.forEach(element => {
-                //     updateAirplaneDevice(element);
-                // });
+                // console.log(newAirPlane);
+
                 for (let iterator of newAirPlane) {
                     const res = await updateAirplaneDevice(iterator);
                     console.log(res);
                 }
 
-                // this.showAlert = true;
-                // this.alertText = '上报成功';
-                // this.$router.push('situation');
+                this.showAlert = true;
+                this.alertText = '上报成功';
+                this.$router.push('situation');
 
             },
             closeTip() {
@@ -310,9 +318,11 @@
             },
             async submitData(data) {
                 const res = await updateAirplane(data);
+                console.log(res);
             },
             async submitVehicleData (data) {
                 const res = await updateVehicle(data);
+                console.log(res);
             },
             format(percentage) {
                 return percentage === 100 ? '满' : `${percentage}%`;

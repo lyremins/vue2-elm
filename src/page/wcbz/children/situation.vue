@@ -2,11 +2,11 @@
   	<div class="city_container">
         <head-top head-title="飞机态势" go-back='true'>
         </head-top>
-        <p class="title">飞行计划</p>
+        <p class="title">飞行计划 - {{dayTime}} </p>
         <div class="planTable">
             <div>
-                <span>总飞机数：{{airPlaneDataCount.count}}</span>
-                <span>已进场飞机数：{{planData.data.length}}</span>
+                <span>总飞机数：{{totalPlane}}</span>
+                <span>已进场飞机数：{{jcPlane}}</span>
             </div>
             <div>
                 <span>总起落数：{{totalQlNumber}}</span>
@@ -35,8 +35,8 @@
         <p class="title">保障任务</p>
         <div class="planTable">
             <div>
-                <span>总保障车辆数：{{ensureData.data.length}}</span>
-                <span>总保障任务数：{{ensureData.data.length}}</span>
+                <span>总保障车辆数：{{totalEnsure}}</span>
+                <span>总保障任务数：{{atotalEnsure}}</span>
             </div>
             <div>
                 <span>进场车辆数：{{carJcNumber}}</span>
@@ -131,11 +131,20 @@
                 totalJcNumber: 0,
                 atotalQlNumber: 0,
                 carJcNumber: 0,
-                carBzNumber: 0
+                carBzNumber: 0,
+                dayTime: '',
+                mapLists: {},
+                totalPlane: 0,
+                jcPlane: 0,
+                totalEnsure:0,
+                atotalEnsure: 0
             }
         },
 
         mounted(){
+            var day2 = new Date();
+            day2.setTime(day2.getTime());
+            this.dayTime = day2.getFullYear()+"-" + (day2.getMonth()+1) + "-" + day2.getDate();
             this.initData();
         },
 
@@ -160,11 +169,26 @@
                 this.planData = await getPlan();
                 console.log(this.planData);
                 this.planData.data.forEach(element => {
-                    this.totalQlNumber += parseInt(element.upDownNumber);
-                    this.totalJcNumber += parseInt(element.totalNumber);
+                    if (element.dateTime === this.dayTime) {
+                        this.mapLists[element.airName] || (this.mapLists[element.airName] = []);
+                        this.mapLists[element.airName].push(element);
+                        this.totalQlNumber += parseInt(element.upDownNumber);
+                        // this.totalQlNumber += parseInt(element.upDownNumber);
+                        // this.totalJcNumber += parseInt(element.totalNumber);
+                    }
                 });
+                console.log(this.mapLists);
+                Object.keys(this.mapLists).forEach((key,value) => {
+                    this.totalPlane ++;
+
+                });
+
                 this.airPlaneData.data.forEach(element => {
-                    this.atotalQlNumber += parseInt(element.airUpOrDown);
+                    console.log(element);
+                    if (element.enter === '进场') {
+                        this.jcPlane ++ ;
+                        this.atotalQlNumber += parseInt(element.airUpOrDown);
+                    }
                 });
                 this.deviceStateData.data.forEach(element => {
                     if (element.taskState === '进场') {
@@ -172,6 +196,19 @@
                     }
                 });
                 this.ensureData = await getEnsure();
+                const newEnsure = [];
+                this.ensureData.data.forEach(element => {
+                    element.filed3.forEach(i => {
+                        newEnsure[i] || (newEnsure[i] = []);
+                        newEnsure[i].push(i);
+                    });
+                    if (element.dateTime != this.dayTime) {
+                        this.carBzNumber ++
+                    }
+                });
+                Object.keys(newEnsure).forEach((key,value) => {
+                    this.totalEnsure ++;
+                });
             },
             airSelect(event) {
                 this.airname = event.target.value;

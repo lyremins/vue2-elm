@@ -83,6 +83,9 @@
         },
 
         mounted(){
+            var day2 = new Date();
+            day2.setTime(day2.getTime());
+            this.dayTime = day2.getFullYear()+"-" + (day2.getMonth()+1) + "-" + day2.getDate();
             this.initData();
         },
         mixins: [mixin],
@@ -119,6 +122,23 @@
                     }
                 });
                 this.ensureData = await getEnsure();
+                const newEnsure = [];
+                const oldEnsure = [];
+                this.ensureData.data.forEach(element => {
+                    if (element.filed7 === this.dayTime) {
+                        element.filed3.forEach(i => {
+                            newEnsure[i] || (newEnsure[i] = []);
+                            newEnsure[i].push(i);
+                        });
+                    } else {
+                            element.filed3.forEach(i => {
+                            oldEnsure[i] || (oldEnsure[i] = []);
+                            oldEnsure[i].push(i);
+                        });
+                    }
+                });
+                console.log(newEnsure);
+                console.log(oldEnsure);
             },
             airSelect(event) {
                 this.airname = event.target.value;

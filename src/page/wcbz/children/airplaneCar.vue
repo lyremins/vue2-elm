@@ -7,7 +7,6 @@
             <label :for="index">飞机编号：{{value.code}}</label>
             <div class="showDevice" v-show="value.isCheck">
                 <div v-for="(v,i) in value.device">
-                    {{v.isCheck}}
                     <input @change="changeDevice(i,v.isCheck)" class="radio" type="checkbox" :id="i"  />
                     <label :for="i">车辆编号：{{v.model}}</label>
                 </div>

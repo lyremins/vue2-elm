@@ -3,7 +3,7 @@
     <div class="sheet-list">
 
         <div class="sheet-header" @click="toggleSheet">
-            <i class="icon iconfont icon-enter" ref="toggleicon"></i>   <span class="sheet-header-span">飞机名称{{data_item.filed1}} <span></span></span>
+            <i class="icon iconfont icon-enter" ref="toggleicon"></i>   <span class="sheet-header-span">任务名称：{{data_item.filed6}} <span></span></span>
             <i class="sheet-header-i icon iconfont icon-setup" @click.stop="showSheetMenu(data_item.filed1)"></i>   </div>
 
         <div v-if="showSheets" class="sheet-content">
