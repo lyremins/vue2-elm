@@ -1,6 +1,6 @@
 <template>
     <div class="city_container">
-        <head-top head-title="添加保障计划" go-back='true'>
+        <head-top v-show="device !== 'h5'" head-title="添加保障计划" go-back='true'>
         </head-top>
         <form class="loginForm">
             <section class="input_container">
@@ -56,7 +56,7 @@
             </div>
         </form>
         <button @click="save()">保存信息</button>
-        <footGuide></footGuide>
+        <footGuide :device="device"></footGuide>
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
     </div>
 </template>
@@ -95,7 +95,8 @@
                 bzPerson: {},
                 planData: {},
                 carList: {},
-                airPlaneData: {}
+                airPlaneData: {},
+                device: this.$util.getUrlKey('device')
             }
         },
         mixins: [mixin],

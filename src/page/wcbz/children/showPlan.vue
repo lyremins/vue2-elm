@@ -1,6 +1,6 @@
 <template>
   	<div class="city_container">
-        <head-top head-title="查看飞行计划" go-back='true'>
+        <head-top v-show="device !== 'h5'" head-title="查看飞行计划" go-back='true'>
 
         </head-top>
         <!-- {{mapLists}} -->
@@ -51,7 +51,7 @@
         <router-link to="plan">
             <button class="button">添加飞行计划</button>
         </router-link>
-        <footGuide></footGuide>
+        <footGuide :device="device"></footGuide>
     </div>
 </template>
 
@@ -70,7 +70,8 @@
                 mapLists: {},
                 listIndex: '',
                 dayTime: '',
-                showOld: false
+                showOld: false,
+                device: this.$util.getUrlKey('device')
             }
         },
 

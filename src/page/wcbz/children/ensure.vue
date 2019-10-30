@@ -1,13 +1,13 @@
 <template>
   	<div class="city_container">
-        <head-top head-title="保障管理" go-back='true'>
+        <head-top v-show="device !== 'h5'" head-title="保障管理" go-back='true'>
 
         </head-top>
         <SheetList v-for="(item,index) in ensureData.data" :item="item"></SheetList>
         <router-link to="addEnsure">
             <button class="button">添加保障信息</button>
         </router-link>
-        <footGuide></footGuide>
+        <footGuide :device="device"></footGuide>
     </div>
 </template>
 
@@ -21,7 +21,8 @@
     	data(){
             return{
                 ensureData: {},
-                ensureCount: 0
+                ensureCount: 0,
+                device: this.$util.getUrlKey('device')
             }
         },
 
