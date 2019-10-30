@@ -334,6 +334,13 @@ export const isIos = () => {
     return false;
 }
 
+export const isAndroid = () => {
+    if (/Android/.test(navigator.userAgent)) {
+        return true;
+    }
+    return false;
+}
+
 /*
   安卓下模拟paste操作
 */
@@ -460,7 +467,7 @@ export const wpsCloseWeb = () => {
   window.splash.onBackPressed(true);
   return ;
 }
-/* 
+/*
   身份证号检验，长度18位数字最后一位允许字符X
 */
 export const checkIDCard = (IDCard) => {
@@ -468,7 +475,7 @@ export const checkIDCard = (IDCard) => {
   return  reg.test(IDCard)
 }
 
-/* 
+/*
   姓名检验，只能是中文
 */
 export const checkName = (name) => {

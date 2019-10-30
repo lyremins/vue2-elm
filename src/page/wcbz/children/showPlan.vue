@@ -48,9 +48,7 @@
             </div>
         </div>
         </div>
-        <router-link to="plan">
-            <button class="button">添加飞行计划</button>
-        </router-link>
+            <button @click="toAddPlan()" class="button">添加飞行计划</button>
         <footGuide :device="device"></footGuide>
     </div>
 </template>
@@ -119,6 +117,14 @@
             changeSubList(index) {
                 this.mapLists[this.listIndex][index].isShow = !this.mapLists[this.listIndex][index].isShow;
                 this.mapLists = Object.assign({},this.mapLists);
+            },
+            toAddPlan() {
+                console.log(this.$util.isAndroid());
+                if (this.$util.isAndroid()) {
+                    this.$router.push('plan?device=h5');
+                } else {
+                    this.$router.push('plan');
+                }
             }
         }
     }

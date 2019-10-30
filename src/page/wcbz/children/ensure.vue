@@ -4,9 +4,7 @@
 
         </head-top>
         <SheetList v-for="(item,index) in ensureData.data" :item="item"></SheetList>
-        <router-link to="addEnsure">
-            <button class="button">添加保障信息</button>
-        </router-link>
+            <button @click="toAddEnsure()"  class="button">添加保障信息</button>
         <footGuide :device="device"></footGuide>
     </div>
 </template>
@@ -45,6 +43,14 @@
                 this.ensureCount = await getEnsureCount();
                 this.ensureData = await getEnsure();
                 console.log(this.ensureData);
+            },
+            toAddEnsure() {
+                console.log(this.$util.isAndroid());
+                if (this.$util.isAndroid()) {
+                    this.$router.push('addEnsure?device=h5');
+                } else {
+                    this.$router.push('addEnsure');
+                }
             }
         }
     }
