@@ -120,7 +120,11 @@
                 if (result.status == 1) {
                     this.showAlert = true;
                     this.alertText = '添加成功';
-                    this.$router.push('/index');
+                    if (this.$util.isAndroid()) {
+                        this.$router.push('ensure?device=h5');
+                    } else {
+                        this.$router.push('ensure');
+                    }
                 } else {
                     this.$message({
                         type: 'error',

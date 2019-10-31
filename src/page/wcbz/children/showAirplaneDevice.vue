@@ -1,6 +1,6 @@
 <template>
     <div class="city_container">
-        <head-top head-title="飞机-有售器件关联" go-back='true'>
+        <head-top v-show="device !== 'h5'" head-title="飞机-有售器件关联" go-back='true'>
         </head-top>
         <div>
             <table>
@@ -19,7 +19,7 @@
             </table>
         </div>
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
-        <foot-guide></foot-guide>
+        <foot-guide :device="device"></foot-guide>
     </div>
 </template>
 
@@ -72,7 +72,8 @@
                 air: [],
                 newData: [],
                 device: [],
-                airplaneIndex: ''
+                airplaneIndex: '',
+                device: this.$util.getUrlKey('device')
             }
         },
 

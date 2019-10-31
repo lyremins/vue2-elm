@@ -240,7 +240,11 @@
                 this.showAlert = false;
             },
             bztask() {
-                this.$router.push('addEnsure');
+                if (this.$util.isAndroid()) {
+                    this.$router.push('addEnsure?device=h5');
+                } else {
+                    this.$router.push('addEnsure');
+                }
             },
             changeSelect(index) {
                 this.airPlaneData.data[index].isCheck = !this.airPlaneData.data[index].isCheck;
