@@ -1,23 +1,25 @@
 <template>
     <div class="city_container">
-        <head-top head-title="飞机-弹药关联" go-back='true'>
-        </head-top>
+        <!-- <head-top head-title="飞机-车辆关联" go-back='true'>
+        </head-top> -->
         <div>
             <table>
                 <tr>
-                    <td>飞机_弹药编号</td>
-                    <td>飞机编号</td>
-                    <td>弹药编号</td>
+                    <td>飞机_车辆编号</td>
+                    <td>飞机类型</td>
+                    <td>车辆类型</td>
+                    <td>行驶里程</td>
                 </tr>
                 <tr v-for="v in airPlaneData.data">
-                    <td>{{v.air_code}}_{{v.ammo_code}}</td>
-                    <td>{{v.air_code}}</td>
-                    <td>{{v.ammo_code}}</td>
+                    <td>{{v.air_code}}_{{v.car_code}}</td>
+                    <td>{{v.airplane_type}}</td>
+                    <td>{{v.car_code}}</td>
+                    <td>{{v.lc}}</td>
                 </tr>
             </table>
         </div>
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
-        <foot-guide></foot-guide>
+        <!-- <foot-guide></foot-guide> -->
     </div>
 </template>
 
@@ -25,7 +27,7 @@
     import headTop from 'src/components/header/head'
     import alertTip from 'src/components/common/alertTip'
     import {
-        getAirplaneAmmo
+        getAirplaneCar
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
     import footGuide from 'src/components/footer/footer'
@@ -78,9 +80,9 @@
         },
 
         components: {
-            headTop,
+            // headTop,
+            // footGuide,
             alertTip,
-            footGuide
         },
 
         computed: {
@@ -92,7 +94,7 @@
                 this.showAlert = false;
             },
             async init() {
-                this.airPlaneData = await getAirplaneDevice();
+                this.airPlaneData = await getAirplaneCar();
             },
             selectOrganiz(name) {
                 console.log(name);
@@ -119,6 +121,7 @@
         padding-top: 2.35rem;
         font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
+        min-height: 800PX;
         button {
             @include sc(.65rem, #fff);
             font-family: Helvetica Neue, Tahoma, Arial;

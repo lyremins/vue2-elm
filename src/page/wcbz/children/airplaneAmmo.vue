@@ -110,6 +110,8 @@
                                 let l = {
                                     air_code: elements.code,
                                     ammo_code:  element.filed1,
+                                    zsm:  element.filed6,
+                                    ys:  element.filed6,
                                 }
                                 data.push(l)
                             }

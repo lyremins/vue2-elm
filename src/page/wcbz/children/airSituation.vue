@@ -1,39 +1,21 @@
 <template>
   	<div class="city_container">
-        <head-top head-title="飞机状态" go-back='true'>
-        </head-top>
         <p class="title1">参加计划的飞机：</p>
         <div class="box">
-            <div @click="toflyDetail(value.airplane_id)" class="boxData" v-for="(value,index) in airPlaneData.data" v-if="index !== '__v'">
-                <div v-for="v in planIndex ">
-                    <div v-show="value.code === v && value.enter === '已进场'">
+            <div @click="toflyDetail(value.airplane_id)" class="boxData" >
+            <div v-for="v in arrayData[0]">
+                <!-- {{v}} -->
+                <div v-for="(value,index) in airPlaneData.data" v-if="value.code === v.airName">
+                    <div class="listBox">
+                        <img class="flyIcon" src="../../../images/flyIcon.png">
+                        <span class="icon iconTsk" :class="{'wh': value.state === '完好',
+                                                'fault': value.state === '定检' ||
+                                                value.state === '大修' ||
+                                                value.state === '排故',
+                                                'try': value.state === '试飞' ||
+                                                value.state === '待退役'}">{{value.state}}</span>
+                        <p>起落次数：{{value.airUpOrDown}}</p>
                         <p>已进场：{{value.code}}</p>
-                        <i class="fa fa-fighter-jet"></i>
-                        <span class="icon iconTsk" :class="{'wh': value.state === '完好',
-                                                'fault': value.state === '定检' ||
-                                                value.state === '大修' ||
-                                                value.state === '排故',
-                                                'try': value.state === '试飞' ||
-                                                value.state === '待退役'}">{{value.state}}</span>
-                        <p>起落次数：{{value.airUpOrDown}}</p>
-                        <div v-show="nowIndex === value.airplane_id" class="floatBox">
-                            <p style="">飞机型号：{{value.code}}</p>
-                            <p style="">部队编号：{{value.army_id}}</p>
-                            <p style="">单位：{{value.unit}}</p>
-                            <p style="">起落：{{value.stageUpOrDown}}</p>
-                            <p style="">时长：{{value.airHour}}</p>
-                        </div>
-                    </div>
-                    <div v-show="value.code === v && (!value.enter || value.enter === '未进场') ">
-                        <p>未进场：{{value.code}}</p>
-                        <i class="fa fa-fighter-jet"></i>
-                        <span class="icon iconTsk" :class="{'wh': value.state === '完好',
-                                                'fault': value.state === '定检' ||
-                                                value.state === '大修' ||
-                                                value.state === '排故',
-                                                'try': value.state === '试飞' ||
-                                                value.state === '待退役'}">{{value.state}}</span>
-                        <p>起落次数：{{value.airUpOrDown}}</p>
                         <div v-show="nowIndex === value.airplane_id" class="floatBox">
                             <p style="">飞机型号：{{value.code}}</p>
                             <p style="">部队编号：{{value.army_id}}</p>
@@ -43,21 +25,25 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
         </div>
         <p class="title1">未计划的飞机：</p>
         <div class="box">
-            <div @click="toflyDetail(value.airplane_id)" class="boxData" v-for="(value,index) in airPlaneData.data" v-if="index !== '__v'">
-                <div v-for="v in planIndex ">
-                    <div v-show="value.code != v">
-                        <p>{{value.code}}</p>
-                        <i class="fa fa-fighter-jet"></i>
+            <div @click="toflyDetail(value.airplane_id)" class="boxData" v-for="(value,index) in airPlaneData.data" v-if="index !== '__v' && value.code !== v.airName">
+                <div v-for="v in arrayData[0]" >
+                    {{v.airName}} - {{value.code}}
+                    <div class="noPlanBox">
+                        <!-- {{value.code}} - {{v.airname}} -->
+                        <!-- <i class="fa fa-fighter-jet"></i> -->
+                        <img class="flyIcon" src="../../../images/flyIcon.png">
                         <span class="icon iconTsk" :class="{'wh': value.state === '完好',
                                                 'fault': value.state === '定检' ||
                                                 value.state === '大修' ||
                                                 value.state === '排故',
                                                 'try': value.state === '试飞' ||
                                                 value.state === '待退役'}">{{value.state}}</span>
+                        <p>{{value.code}}</p>
                         <p>起落次数：{{value.airUpOrDown}}</p>
                         <div v-show="nowIndex === value.airplane_id" class="floatBox">
                             <p style="">飞机型号：{{value.code}}</p>
@@ -79,7 +65,6 @@
             <p>{{taskModel[index]}}</p>
         </div>
         </div> -->
-        <footGuide></footGuide>
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
     </div>
 </template>
@@ -152,7 +137,8 @@
                 mapLists: {},
                 dayTime: '',
                 planIndex: [],
-                newData: []
+                newData: [],
+                arrayData: []
             }
         },
 
@@ -165,7 +151,6 @@
         mixins: [mixin],
 
         components:{
-            headTop,
             alertTip
         },
 
@@ -196,17 +181,20 @@
                     }
                 });
                 this.ensureData = await getEnsure();
+                this.arrayData = [];
                 this.planData.data.forEach((element,index) => {
+                    console.log('333333', element.dateTime);
+                    console.log(element);
                     element.isShow = false;
-                    if (element.dateTime === this.dayTime) {
-                        this.mapLists[element.airName] || (this.mapLists[element.airName] = []);
-                        this.mapLists[element.airName].push(element);
+                    if (this.toTimeStamp(element.dateTime) === this.toTimeStamp(this.dayTime)) {
+                        this.arrayData.push(element.airData);
                     }
                 });
-                console.log("1222", this.planData.data);
+                console.log(this.arrayData);
                 Object.keys(this.mapLists).forEach((key) => {
                     this.planIndex.push(key);
                 });
+                console.log("33333", this.planIndex);
                 // this.planIndex.forEach(elements => {
                 //     this.airPlaneData.data.forEach(element => {
                 //         if (elements === element.code) {
@@ -258,7 +246,12 @@
             },
             toEnusre() {
                 this.$router.push('ensure');
-            }
+            },
+            toTimeStamp(time) {
+                time = time.replace(/-/g, '/') // 把所有-转化成/
+                let timestamp = new Date(time).getTime()
+                return timestamp
+            },
         }
     }
 
@@ -267,7 +260,7 @@
 <style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container{
-        padding-top: 2.35rem;
+        padding-top: 0.35rem;
         font: "Microsoft YaHei";
         margin: 0 1rem;
         .button {
@@ -285,9 +278,9 @@
         }
         .deviceBox {
             position: relative;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            // display: flex;
+            // justify-content: space-between;
+            // align-items: center;
             input {
                 width: 40%;
                 font-size: 12PX;
@@ -298,8 +291,8 @@
         }
         .devicelist {
             font-size: 16PX;
-                display: flex;
-                justify-content: space-between;
+                // display: flex;
+                // justify-content: space-between;
                 margin: 0 10%;
         }
         .box {
@@ -310,6 +303,8 @@
             justify-content: space-between;
             .boxData {
                 position: relative;
+                // width: 45%;
+                display: flex;
             }
             .icon {
                 position: absolute;
@@ -347,7 +342,7 @@
             // top: 40%;
         }
         .title {
-            font-size: 14PX;
+            font-size: 16PX;
             margin: 0.2rem;
         }
         .wh {
@@ -383,8 +378,17 @@
         }
         .title1 {
             text-align: left;
-            font-size: 12PX;
+            font-size: 16PX;
             padding: 10PX;
+        }
+        .flyIcon {
+            width: 50%;
+        }
+        .listBox {
+            text-align: center;
+        }
+        .noPlanBox {
+            text-align: center;
         }
     }
 

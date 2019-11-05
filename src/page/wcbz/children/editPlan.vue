@@ -3,53 +3,50 @@
 
         <!-- {{mapLists}} -->
         <!-- <SheetList v-for="(item,index) in airPlaneData.data" :item="item"></SheetList> -->
-        <div @click="editPlan(item.plan_id)" class="showPlan" v-if="showTodayPlan && toTimeStamp(item.dateTime) === dayTime" v-for="(item,index) in airPlaneData.data" >
-           <i class="downIcon"> </i><div @click="changeList(index)" > 计划名称：{{item.name}}</div>
-            <div class="showList" v-show="item.isShow">
-                <p style="">计划名称：{{item.name}}</p>
-                <p style="">计划日期：{{item.dateTime}}</p>
-                <p style="">总人数：{{item.totalNumber}}</p>
-                <p style="">进场时间：{{item.approachTime}}</p>
-                <div class="airplane" v-for="(v,i) in item.airData">
+        <div class="showPlan" >
+            <div class="showList">
+                计划名称：<input v-model="airPlaneData.name" type="text" name="" id="">
+                计划日期：<mt-field type="date" v-model="airPlaneData.dateTime"></mt-field>
+                总人数：<input v-model="airPlaneData.totalNumber" type="text" name="" id="">
+                进场时间：<mt-field type="time" v-model="airPlaneData.approachTime"></mt-field>
+                <!-- <p style="">计划名称：{{airPlaneData.name}}</p>
+                <p style="">计划日期：{{airPlaneData.dateTime}}</p>
+                <p style="">总人数：{{airPlaneData.totalNumber}}</p>
+                <p style="">进场时间：{{airPlaneData.approachTime}}</p> -->
+                <div class="airplane" v-for="(v,i) in airPlaneData.airData">
                     <i class="downIcon"> </i><p @click="changeSubList(i)" style="">飞机编号：{{v.airName}}</p>
-                    <div class="airplaneContent" v-show="v.isShow">
-                        <p style="">飞行科目：{{v.airSubject}}</p>
-                        <p style="">气象科目：{{v.sceneSubject}}</p>
-                        <p style="">起落次数：{{v.upDownNumber}}</p>
-                        <p style="">飞行时间：{{v.flightTime}}</p>
+                    <div class="airplaneContent">
+                        <p>选择飞行科目：</p>
+                        <div class="deviceBox">
+                            <select class="select"  v-model="airPlaneData.airData[i].airSubject">
+                                <option v-for="v in fxSubject" :value="v">{{v}}</option>
+                            </select>
+                        </div>
+                        <p>选择气象科目：</p>
+                        <div class="deviceBox">
+                            <select class="select" v-model="airPlaneData.airData[i].sceneSubject">
+                                <option v-for="v in qxSubject" :value="v">{{v}}</option>
+                            </select>
+                        </div>
+                        起落次数：<input type="text" v-model="airPlaneData.airData[i].upDownNumber">
+                        飞行时间：<mt-field type="time" v-model="airPlaneData.airData[i].flightTime"></mt-field>
                     </div>
                 </div>
             </div>
         </div>
-        <div>
-            <div v-show="!showOld" class="oldButton" @click="showOldPlan()">查看往期计划 -></div>
-            <div v-show="!showTodayPlan" class="oldButton" @click="showOldPlan()">查看当日计划 -></div>
-            <div @click="toAddPlan()" class="addButton">添加飞行计划 -></div>
-            <div @click="editPlan(item.plan_id)" class="oldShow" v-show="showOld" v-if="toTimeStamp(item.dateTime) != dayTime" v-for="(item,index) in airPlaneData.data" >
-                <i class="downIcon"> </i><div @click="changeList(index)" >计划名称：{{item.name}}</div>
-                <div class="showList" v-show="item.isShow">
-                    <p style="">计划名称：{{item.name}}</p>
-                    <input type="text" v-model="formData.name">
-                    <p style="">计划日期：{{item.dateTime}}</p>
-                    <p style="">总人数：{{item.totalNumber}}</p>
-                    <div class="airplane" v-for="(v,i) in item.airData">
-                        <i class="downIcon"> </i><p @click="changeSubList(i)" style="">飞机编号：{{v.airName}}</p>
-                        <div class="airplaneContent" v-show="v.isShow">
-                            <p style="">飞行科目：{{v.airSubject}}</p>
-                            <p style="">气象科目：{{v.sceneSubject}}</p>
-                            <p style="">起落次数：{{v.upDownNumber}}</p>
-                            <p style="">飞行时间：{{v.flightTime}}</p>
-                        </div>
-                    </div>
-            </div>
+         <div>
+            <div class="sButton" @click="deletePlan()">删除当前计划</div>
+
+            <div class="sButton"  @click="submitEdit()">保存当前修改</div>
         </div>
+        <div>
         </div>
     </div>
 </template>
 
 <script>
     import headTop from 'src/components/header/head'
-    import { getPlan } from '../../../service/getData';
+    import { getPlan,getPlanbyID,getConfig,updatePlan,deletePlan } from '../../../service/getData';
     // import SheetList from '../../../components/common/sheetListPlan.vue'
     import mixin from '../../../mixin'
 
@@ -64,6 +61,7 @@
                 dayTime: '',
                 showOld: false,
                 device: this.$util.getUrlKey('device'),
+                plan_id: this.$util.getUrlKey('plan_id'),
                 showTodayPlan: true,
                 formData: {
                     name:'ddd',
@@ -75,6 +73,8 @@
                     flightTime: [],
                     approachTime: ''
                 },
+                fxSubject:[],
+                qxSubject:[]
             }
         },
 
@@ -100,17 +100,20 @@
 
         methods:{
             async initData(){
-                this.airPlaneData = await getPlan();
+                this.airPlaneData = await getPlanbyID(this.plan_id);
                 console.log(this.airPlaneData);
-                this.airPlaneData.data.forEach(elements => {
-                    elements.isShow = false;
-                    elements.airData.forEach(element => {
-                        element.isShow = false;
-                    });
-                });
+
+                const config = await getConfig()
+                this.fxSubject = config.data[0].subjectModel.split(",");
+                this.qxSubject = config.data[0].sceneModel.split(",");
+                // this.airPlaneData.data.forEach(elements => {
+                //     elements.isShow = false;
+                //     elements.airData.forEach(element => {
+                //         element.isShow = false;
+                //     });
+                // });
                 // this.formData = this.airPlaneData.data;
                 // console.log("fffff", this.formData);
-                console.log(this.airPlaneData);
                 // this.airPlaneData.data.forEach((element,index) => {
                 //     element.isShow = false;
                 //     this.mapLists[element.name] || (this.mapLists[element.name] = []);
@@ -138,18 +141,10 @@
                 this.airPlaneData = Object.assign({},this.airPlaneData);
             },
             toAddPlan() {
-                let number = 0;
-                this.airPlaneData.data.forEach(element => {
-                    if (this.toTimeStamp(element.dateTime) === (this.dayTime)) {
-                        this.$toast({
-                            message: '当日已存在飞行计划',
-                            duration: 800,
-                            className: 'noticeError'
-                        });
-                        number = 1;
-                    }
-                });
-                if (!number) {
+                console.log(this.$util.isAndroid());
+                if (this.$util.isAndroid()) {
+                    this.$router.push('plan?device=h5');
+                } else {
                     this.$router.push('plan');
                 }
             },
@@ -162,15 +157,23 @@
                 this.showOld = !this.showOld;
                 this.showTodayPlan = !this.showTodayPlan;
             },
-            editPlan(plan_id) {
-                this.$router.push(`/editPlan?plan_id=${plan_id}`)
+            submitEdit() {
+                console.log(this.airPlaneData);
+                updatePlan(this.airPlaneData);
+                this.$toast('修改成功');
+                this.$router.push('editPlan');
+            },
+            deletePlan() {
+                deletePlan(this.plan_id);
+                this.$toast('删除成功');
+                this.$router.push('showPlan');
             }
         }
     }
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container{
         padding-top: 0.35rem;
@@ -186,6 +189,9 @@
         }
         .showList {
             margin-left: 20PX;
+            input {
+                width: 100%;
+            }
         }
         .airplane {
             margin-left: 30PX;
@@ -198,32 +204,26 @@
             border: 1px solid #3892e5;
             color: #3892e5;
             padding: 5px;
-                position: fixed;
-                bottom: 20%;
-                width: 90%;
                 text-align: center;
-                left: 6%;
             background-color: #3892e5;
             color: #fff;
+            // margin-bottom: 10PX;
         }
-        .addButton {
+        .newButton {
             border: 1px solid #3892e5;
             color: #3892e5;
             padding: 5px;
-                position: fixed;
-                bottom: 10%;
-                width: 90%;
                 text-align: center;
-                left: 6%;
             background-color: #3892e5;
             color: #fff;
+            margin-bottom: 20px;
         }
         .showPlan {
-            height: 16rem;
+            // min-height: 16rem;
             overflow: scroll;
         }
         .oldShow {
-            height: 16rem;
+            // height: 16rem;
             overflow: scroll;
         }
         .downIcon {
@@ -235,8 +235,14 @@
             right: 20px;
             top: 20PX;
         }
-        .noticeError {
-            color: #fff!important;
+        .sButton {
+            background-color: #3190e8;
+            color: #fff;
+            // padding: 0.5rem;
+            width: 100%;
+            margin-top: 0.6rem;
+            margin-bottom: 2rem;
+            text-align: center;
         }
     }
 

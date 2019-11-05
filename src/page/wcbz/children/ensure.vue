@@ -1,8 +1,8 @@
 <template>
   	<div class="city_container">
-        <head-top v-show="device !== 'h5'" head-title="保障管理" go-back='true'>
+        <!-- <head-top v-show="device !== 'h5'" head-title="保障管理" go-back='true'>
 
-        </head-top>
+        </head-top> -->
         <SheetList v-for="(item,index) in ensureData.data" :item="item"></SheetList>
             <button @click="toAddEnsure()"  class="button">添加保障信息</button>
         <footGuide :device="device"></footGuide>
@@ -60,7 +60,7 @@
 <style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container{
-        padding-top: 2.35rem;
+        padding-top: 0.35rem;
         font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
         .button {

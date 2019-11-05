@@ -1,7 +1,8 @@
 <template>
     <div class="city_container">
-        <head-top head-title="飞机-有售器件关联" go-back='true'>
-        </head-top>
+        <!-- <head-top head-title="飞机-有售器件关联" go-back='true'>
+        </head-top> -->
+
         <div class="radioBox" v-for="(value,index) in airPlaneData.data">
         <input class="radio" @change="changeSelect(index,value.isCheck)" v-model="air[index]" type="checkbox" :id="index" />
             <label :for="index">飞机编号：{{value.code}}</label>
@@ -13,7 +14,7 @@
             </div>
         </div>
         <button @click="save()">保存信息</button>
-        <button @click="show()">查看关联信息</button>
+        <!-- <button @click="show()">查看关联信息</button> -->
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
         <foot-guide></foot-guide>
     </div>
@@ -28,7 +29,7 @@
         getDevice
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
-    import footGuide from 'src/components/footer/footer'
+    // import footGuide from 'src/components/footer/footer'
 
     export default {
         data() {
@@ -78,9 +79,9 @@
         },
 
         components: {
-            headTop,
+            // headTop,
+            // footGuide,
             alertTip,
-            footGuide
         },
 
         computed: {
@@ -134,6 +135,7 @@
                 }
                     this.showAlert = true;
                     this.alertText = '添加成功';
+                    this.$router.push('showAirplaneDevice');
                 // let result = addAirplaneDevice(this.formData);
                 // if (result.status == 1) {
                 //     this.showAlert = true;
@@ -199,7 +201,7 @@
 <style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container {
-        padding-top: 2.35rem;
+        padding-top: 0.35rem;
         font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
         button {
@@ -241,6 +243,15 @@
         }
         .showDevice {
             margin-left: 40PX;
+        }
+        .radioBox {
+            line-height: 30PX;
+            .radio {
+                zoom: 1.5;
+            }
+            label {
+                vertical-align: text-bottom;
+            }
         }
     }
 

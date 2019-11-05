@@ -8,6 +8,14 @@
         <mt-field placeholder="请输入出厂日期" type="date" v-model="formData.dateTime"></mt-field>
         <p>输入总人数：</p>
         <input v-model="formData.totalNumber" placeholder="总人数" class="select" type="text">
+        <p>输入进场时间：</p>
+        <!-- <input v-model="formData.approachTime" placeholder="进场时间" class="select" type="text"> -->
+        <mt-field placeholder="请输入进场时间" type="time" v-model="formData.approachTime"></mt-field>
+        <!-- <mt-datetime-picker
+            ref="picker"
+            type="time"
+            v-model="formData.approachTime">
+        </mt-datetime-picker> -->
         <div class="radioBox" v-for="(value,index) in airPlaneData.data" >
             <input class="radio" :value="value" @change="changeSelect(index)"  v-model="air[index]" type="checkbox" :id="index" />
             <label :for="index">出厂号码：{{value.code}}</label>
@@ -27,9 +35,19 @@
                 <p>设置起落次数：</p>
                 <input v-model="formData.upDownNumber[index]" placeholder="起落次数" class="select" type="text">
                 <p>输入飞行任务时间：</p>
-                <input v-model="formData.flightTime[index]" placeholder="飞行任务时间" class="select" type="text">
-                <p>输入进场时间：</p>
-                <input v-model="formData.approachTime[index]" placeholder="进场时间" class="select" type="text">
+                <!-- <input v-model="formData.flightTime[index]" placeholder="飞行任务时间" class="select" type="text"> -->
+                <mt-field placeholder="飞行任务时间" type="time" v-model="formData.flightTime[index]"></mt-field>
+                <!-- <p>携弹类型：</p>
+                <div class="xd">
+                    {{xdType}}
+                    <div v-if="value.code === v.air_code" v-for="v in airplaneAmmoData.data" >
+                        <input class="radio" :value="v" v-model="xdType"  type="checkbox" :id="index" />
+                        <label :for="index">携弹名称：{{v.air_code}}_{{v.ammo_code}}</label>
+                    </div>
+                    <select class="select" v-model="xdType[index]">
+                        <option v-if="value.code === v.air_code" v-for="v in airplaneAmmoData.data" :value="v">{{v.air_code}}_{{v.ammo_code}}</option>
+                    </select>
+                </div> -->
             </div>
         </div>
 
@@ -44,6 +62,7 @@
                         <p>计划名称： {{item.name}}</p>
                         <p>出厂日期： {{item.dateTime}}</p>
                         <p>总人数： {{item.totalNumber}}</p>
+                        <p>进场时间：{{item.approachTime}}</p>
                     </div>
                     <p v-show="index === 0">绑定飞机：</p>
                     <div>
@@ -53,7 +72,6 @@
                             <p>气象科目：{{item.sceneSubject}}</p>
                             <p>起落次数：{{item.upDownNumber}}</p>
                             <p>飞行任务时间：{{item.flightTime}}</p>
-                            <p>进场时间：{{item.approachTime}}</p>
                         </div>
                     </div>
 
@@ -96,7 +114,8 @@
         getVehicle,
         getSubject,
         addPlan,
-        getConfig
+        getConfig,
+        getAirplaneAmmo
          } from '../../../service/getData';
 
     export default {
@@ -147,7 +166,7 @@
                     sceneSubject: [],
                     upDownNumber: [],
                     flightTime: [],
-                    approachTime: []
+                    approachTime: ''
                 },
                 air: [
                 ],
@@ -160,7 +179,12 @@
                 popupVisible: false,
                 newData: [],
                 showView: [],
-                device: this.$util.getUrlKey('device')
+                device: this.$util.getUrlKey('device'),
+                type: this.$util.getUrlKey('type'),
+                lastIndex: '',
+                nowIndex: '',
+                airplaneAmmoData: {},
+                xdType: [],
             }
         },
 
@@ -179,7 +203,11 @@
         },
 
         methods:{
+            openPicker() {
+                this.$refs.picker.open();
+            },
             async initData(){
+                console.log(this.formData);
                 this.airPlaneData = await getAirplane();
                 this.airPlaneData.data.forEach(element => {
                     element.isCheck = false;
@@ -190,6 +218,18 @@
                 const config = await getConfig()
                 this.fxSubject = config.data[0].subjectModel.split(",");
                 this.qxSubject = config.data[0].sceneModel.split(",");
+                this.airplaneAmmoData = await getAirplaneAmmo();
+                if (this.type === 'edit') {
+                    this.formData.name = '计划1';
+                    this.formData.dateTime = '2019-11-05';
+                    this.formData.totalNumber = 12;
+                    this.formData.approachTime = '00:03'
+                    this.airPlaneData.data.forEach((element,index) => {
+                        if (element.code === 'A3') {
+                            this.air[index] = true;
+                        }
+                    });
+                }
             },
             vehicleSelect(event) {
                 this.airname = event.target.value;
@@ -206,15 +246,16 @@
                     console.log(element);
                     console.log(index);
                     const data = {
-                        name: this.formData.name,
+                        // name: this.formData.name,
+                        // dateTime: this.formData.dateTime,
+                        // totalNumber: this.formData.totalNumber,
+                        // approachTime: this.formData.approachTime,
                         airName: this.airPlaneData.data[index].code,
-                        dateTime: this.formData.dateTime,
-                        totalNumber: this.formData.totalNumber,
                         airSubject: this.formData.airSubject[index],
                         sceneSubject: this.formData.sceneSubject[index],
                         upDownNumber: this.formData.upDownNumber[index],
-                        approachTime: this.formData.approachTime[index],
-                        isShow: false
+                        flightTime: this.formData.flightTime[index],
+                        // isShow: false
                     }
                     this.newData.push(data);
                 });
@@ -227,11 +268,19 @@
 
             },
             save () {
-                this.newData.forEach(element => {
-                    delete element.isShow;
-                    addPlan(element)
-                });
-                console.log(this.newData);
+                // this.newData.forEach(element => {
+                //     delete element.isShow;
+                //     addPlan(element)
+                // });
+                const data = {
+                    name: this.formData.name,
+                    dateTime: this.formData.dateTime,
+                    totalNumber: this.formData.totalNumber,
+                    approachTime: this.formData.approachTime,
+                    airData: this.newData
+                }
+                console.log(data);
+                addPlan(data);
                 this.showAlert = true;
                 this.alertText = '上报成功';
                 this.$router.push('showPlan');
@@ -247,6 +296,13 @@
                 }
             },
             changeSelect(index) {
+                // if (!this.lastIndex) {
+                //     this.lastIndex = index;
+                // } else {
+                //     this.formData.airSubject[index] = this.formData.airSubject[this.lastIndex];
+                //     this.formData.airSubject = Object.assign([],this.formData.airSubject);
+                // }
+                // console.log("上一条索引",this.lastIndex);
                 this.airPlaneData.data[index].isCheck = !this.airPlaneData.data[index].isCheck;
                 this.airPlaneData.data = Object.assign([],this.airPlaneData.data)
                 console.log(this.airPlaneData.data);
@@ -254,7 +310,12 @@
             showList(index) {
                 this.newData[index].isShow = !this.newData[index].isShow;
                 this.newData = Object.assign([],this.newData)
-            }
+            },
+            toTimeStamp(time) {
+                time = time.replace(/-/g, '/') // 把所有-转化成/
+                let timestamp = new Date(time).getTime()
+                return timestamp
+            },
         }
     }
 
@@ -263,7 +324,7 @@
 <style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container{
-        padding-top: 2.35rem;
+        // padding-top: 2.35rem;
         font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
         .button {
@@ -318,13 +379,19 @@
                 .box {
                     width: 13rem;
                     padding: 20PX;
-                    height: 20rem;
+                    height: 17.6rem;
                     overflow: auto;
                     padding-bottom: 40PX;
                 }
         }
         .viewBox {
             margin-left: 2rem;
+        }
+        .mint-field {
+            // padding: 10PX;
+        }
+        .xd {
+            margin-left: 1rem;
         }
     }
 

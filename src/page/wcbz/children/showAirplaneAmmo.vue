@@ -2,17 +2,26 @@
     <div class="city_container">
         <head-top v-show="device !== 'h5'" head-title="飞机-弹药关联" go-back='true'>
         </head-top>
+        <div class="selectBox">
+
+            <span class="seText">选择飞机：</span>
+            <select v-model="selectAirplane">
+                <option v-for="v in airPlane.data" :value="v.code">{{v.code}}</option>
+            </select>
+            <button @click="search()" class="search">查询</button>
+            <button @click="searchAll()" class="search">查询全部</button>
+        </div>
         <div>
             <table>
                 <tr>
                     <td>飞机_弹药编号</td>
-                    <td>飞机编号</td>
-                    <td>弹药编号</td>
+                    <td>总寿命</td>
+                    <td>余寿</td>
                 </tr>
-                <tr v-for="v in airPlaneData.data">
+                <tr v-for="v in ammoData">
                     <td>{{v.air_code}}_{{v.ammo_code}}</td>
-                    <td>{{v.air_code}}</td>
-                    <td>{{v.ammo_code}}</td>
+                    <td>{{v.zsm}}</td>
+                    <td>{{v.sm}}</td>
                 </tr>
             </table>
         </div>
@@ -25,7 +34,8 @@
     import headTop from 'src/components/header/head'
     import alertTip from 'src/components/common/alertTip'
     import {
-        getAirplaneAmmo
+        getAirplaneAmmo,
+        getAirplane
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
     import footGuide from 'src/components/footer/footer'
@@ -60,7 +70,7 @@
                 taskModel: [],
                 organizData: {},
                 showOrganiz: false,
-                airPlaneData: {},
+                ammoData: {},
                 deviceData: {},
                 checked: false,
                 subitem: {
@@ -70,7 +80,10 @@
                 newData: [],
                 device: [],
                 airplaneIndex: '',
-                device: this.$util.getUrlKey('device')
+                device: this.$util.getUrlKey('device'),
+                airPlane: {},
+                selectAirplane: '',
+                oldPlaneData: {}
             }
         },
 
@@ -93,7 +106,11 @@
                 this.showAlert = false;
             },
             async init() {
-                this.airPlaneData = await getAirplaneAmmo();
+                this.ammoData = await getAirplaneAmmo();
+                this.airPlane = await getAirplane();
+                this.ammoData = this.ammoData.data;
+                this.oldPlaneData = this.ammoData;
+                console.log(this.oldPlaneData);
             },
             selectOrganiz(name) {
                 console.log(name);
@@ -109,6 +126,17 @@
                 this.airPlaneData.data[this.airplaneIndex].device[index].isCheck = !this.airPlaneData.data[this.airplaneIndex].device[index].isCheck;
                 this.airPlaneData.data = Object.assign([],this.airPlaneData.data);
                 console.log(this.airPlaneData.data);
+            },
+            search() {
+                console.log(this.oldPlaneData);
+                this.ammoData = this.oldPlaneData.filter(
+                    item => item.air_code === this.selectAirplane
+                )
+                console.log(this.ammoData);
+
+            },
+            searchAll() {
+                this.ammoData = this.oldPlaneData;
             }
         }
     }
@@ -117,17 +145,16 @@
 <style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container {
-        padding-top: 2.35rem;
-        font: 0.6rem/1.75rem "Microsoft YaHei";
+        // padding-top: 2.35rem;
+        font: 0.8rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
         button {
-            @include sc(.65rem, #fff);
+            @include sc(.25rem, #fff);
             font-family: Helvetica Neue, Tahoma, Arial;
             padding: .28rem .4rem;
             border: 1px;
             margin-top: 0.5rem;
             background-color: #3792e5;
-            width: 100%;
             margin-bottom: 2rem;
         }
         .profileinfopanel-upload {
@@ -171,6 +198,19 @@
                 td {
                     border: 1px solid #000;
                     width: 5rem;
+                }
+                tr {
+                    line-height: 30PX;
+                }
+            }
+            select {
+                width: 3rem;
+                height: 1.2rem;
+                vertical-align: baseline;
+            }
+            .selectBox {
+                button {
+                    width: 3rem;
                 }
             }
     }

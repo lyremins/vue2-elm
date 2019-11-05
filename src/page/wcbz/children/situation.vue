@@ -1,7 +1,5 @@
 <template>
   	<div class="city_container">
-        <head-top head-title="飞机态势" go-back='true'>
-        </head-top>
         <p class="title">飞行计划 - {{dayTime}} </p>
         <div class="planTable">
             <div>
@@ -63,7 +61,6 @@
 
 
 
-    <footGuide></footGuide>
     </div>
 </template>
 
@@ -149,7 +146,6 @@
         },
 
         components:{
-            headTop,
             alertTip
         },
 

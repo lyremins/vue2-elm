@@ -1,7 +1,5 @@
 <template>
   	<div class="city_container">
-        <head-top head-title="车辆状态" go-back='true'>
-        </head-top>
         <p class="title">车辆状态</p>
         <div class="box">
         <div class="boxData" v-for="(value,index) in deviceStateData.data">
@@ -11,7 +9,6 @@
         </div>
         </div>
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
-    <footGuide></footGuide>
     </div>
 </template>
 
@@ -91,7 +88,6 @@
         mixins: [mixin],
 
         components:{
-            headTop,
             alertTip
         },
 
@@ -191,7 +187,7 @@
 <style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container{
-        padding-top: 2.35rem;
+        padding-top: 0.35rem;
         font: "Microsoft YaHei";
         margin: 0 1rem;
         .button {

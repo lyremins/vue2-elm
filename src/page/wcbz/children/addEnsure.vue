@@ -1,7 +1,7 @@
 <template>
     <div class="city_container">
-        <head-top v-show="device !== 'h5'" head-title="添加保障计划" go-back='true'>
-        </head-top>
+        <!-- <head-top v-show="device !== 'h5'" head-title="添加保障计划" go-back='true'>
+        </head-top> -->
         <form class="loginForm">
             <section class="input_container">
                 <input type="text" placeholder="任务名称" name="filed6" v-model="formData.filed6">
@@ -15,18 +15,19 @@
                     <option v-for="v in bzType" :value="v">{{v}}</option>
                 </select>
             </div>
-            <div class="deviceBox">
-                <p class="seText">保障车辆选择：</p>
+            <p @click="showDeviceBox = !showDeviceBox" class="seText">保障车辆选择：</p>
+            <div v-show="showDeviceBox" class="deviceBox">
                 <div v-for="v in carList.data" :value="v.name">
-                    <input v-model="formData.filed3" :value="v.name"  class="radio" type="checkbox" :id="i"  />
-                    <label :for="i">保障车辆：{{v.name}}</label>
+                    <input v-model="formData.filed3" :value="v.vehicle_id"  class="radio" type="checkbox" :id="i"  />
+                    <label class="carInput" :for="i">保障车辆：{{v.name}}</label>
                 </div>
                 <!-- <select class="select" v-model="formData.filed3">
                     <option v-for="v in carList.data" :value="v.name">{{v.name}}</option>
                 </select> -->
             </div>
-            <div class="deviceBox">
-                <p class="seText">人员选择：</p>
+            <br>
+            <p @click="showPersonBox = !showPersonBox" class="seText">人员选择：</p>
+            <div v-show="showPersonBox" class="deviceBox">
                 <div v-for="v in bzPerson.data" :value="v.name">
                     <input v-model="formData.filed4" :value="v.user_name"   class="radio" type="checkbox" :id="i"  />
                     <label :for="i">保障人员：{{v.user_name}}</label>
@@ -36,8 +37,9 @@
                     <option v-for="v in bzPerson.data" :value="v.user_name">{{v.user_name}}</option>
                 </select> -->
             </div>
-            <div class="deviceBox">
-                <p class="seText">飞行计划：</p>
+            <br>
+            <p @click="showPlanBox = !showPlanBox" class="seText">飞行计划：</p>
+            <div v-show="showPlanBox" class="deviceBox">
                 <div v-for="v in airPlaneData.data" :value="v.name">
                     <input v-model="formData.filed5" :value="v.code"   class="radio" type="checkbox" :id="i"  />
                     <label :for="i">飞机：{{v.code}}</label>
@@ -47,22 +49,22 @@
                 </select> -->
             </div>
             <div class="deviceBox">
-            <p class="seText">输入进场时间：</p>
-            <input v-model="formData.filed7" placeholder="进场时间" class="select" type="text">
+                <p class="seText">输入进场时间：</p>
+                <input class="enter" v-model="formData.filed7" placeholder="进场时间" type="text">
             </div>
             <div class="deviceBox">
-            <p class="seText">输入总人数：</p>
-            <input v-model="formData.filed8" placeholder="总人数" class="select" type="text">
+                <p class="seText">输入总人数：</p>
+                <input class="total" v-model="formData.filed8" placeholder="总人数" type="text">
             </div>
         </form>
         <button @click="save()">保存信息</button>
-        <footGuide :device="device"></footGuide>
+        <!-- <footGuide :device="device"></footGuide> -->
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
     </div>
 </template>
 
 <script>
-    import headTop from 'src/components/header/head'
+    // import headTop from 'src/components/header/head'
     import alertTip from 'src/components/common/alertTip'
     import {
         addEnsure,
@@ -96,7 +98,10 @@
                 planData: {},
                 carList: {},
                 airPlaneData: {},
-                device: this.$util.getUrlKey('device')
+                device: this.$util.getUrlKey('device'),
+                showDeviceBox: false,
+                showPersonBox: false,
+                showPlanBox: false
             }
         },
         mixins: [mixin],
@@ -106,7 +111,6 @@
         },
 
         components: {
-            headTop,
             alertTip
         },
 
@@ -175,7 +179,7 @@
 <style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container {
-        padding-top: 2.35rem;
+        // padding-top: 2.35rem;
         font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
         button {
@@ -189,6 +193,7 @@
             margin-bottom: 2rem;
         }
         .seText {
+            width: 150PX;
             display: inline-block;
             padding: 0 .8rem;
             @include sc(.7rem, #666);
@@ -201,10 +206,17 @@
                     font-size: 14PX;
                     padding: 0.5rem;
             }
+            .select {
+                // width: 100PX;
+            }
         }
         .deviceBox {
             div {
                 padding-left: 40px;
+            }
+            select {
+                    width: 150px;
+                    height: 30px;
             }
         }
         // .deviceBox {
@@ -281,5 +293,18 @@
                 }
             }
         }
+        .enter {
+                width: 100PX;
+            }
+            .total {
+                width: 100PX;
+            }
+         .radio {
+             zoom: 2;
+             vertical-align: middle;
+         }
+         .carInput {
+            font-size: 16PX;
+         }
     }
 </style>

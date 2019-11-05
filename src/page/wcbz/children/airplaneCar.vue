@@ -108,6 +108,9 @@
                                 let l = {
                                     air_code: elements.code,
                                     car_code:  element.model,
+                                    airplane_type:  elements.model,
+                                    car_type:  element.model,
+                                    lc:  element.mileage,
                                 }
                                 data.push(l)
                             }

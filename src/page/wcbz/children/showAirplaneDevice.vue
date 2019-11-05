@@ -1,7 +1,16 @@
 <template>
     <div class="city_container">
-        <head-top v-show="device !== 'h5'" head-title="飞机-有售器件关联" go-back='true'>
-        </head-top>
+        <!-- <head-top v-show="device !== 'h5'" head-title="飞机-有售器件关联" go-back='true'>
+        </head-top> -->
+        <div class="selectBox">
+
+            <span class="seText">选择飞机：</span>
+            <select v-model="selectAirplane">
+                <option v-for="v in airPlane.data" :value="v.code">{{v.code}}</option>
+            </select>
+            <button @click="search()" class="search">查询</button>
+            <button @click="searchAll()" class="search">查询全部</button>
+        </div>
         <div>
             <table>
                 <tr>
@@ -10,7 +19,7 @@
                     <td>余寿</td>
                     <td>操作</td>
                 </tr>
-                <tr v-for="v in airPlaneData.data">
+                <tr v-for="v in airPlaneData">
                     <td>{{v.air_code}}_{{v.device_code}}</td>
                     <td>{{v.zsm}}</td>
                     <td>{{v.sm}} </td>
@@ -18,8 +27,9 @@
                 </tr>
             </table>
         </div>
+        <img @click="toLocation()" class="icon" src="../../../images/addIcon.png">
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
-        <foot-guide :device="device"></foot-guide>
+        <!-- <foot-guide :device="device"></foot-guide> -->
     </div>
 </template>
 
@@ -27,11 +37,12 @@
     import headTop from 'src/components/header/head'
     import alertTip from 'src/components/common/alertTip'
     import {
+        getAirplane,
         getAirplaneDevice,
         updateAirplaneDevice
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
-    import footGuide from 'src/components/footer/footer'
+    // import footGuide from 'src/components/footer/footer'
 
     export default {
         data() {
@@ -73,7 +84,10 @@
                 newData: [],
                 device: [],
                 airplaneIndex: '',
-                device: this.$util.getUrlKey('device')
+                device: this.$util.getUrlKey('device'),
+                airPlane: {},
+                selectAirplane: '',
+                oldPlaneData: {}
             }
         },
 
@@ -82,9 +96,9 @@
         },
 
         components: {
-            headTop,
+            // headTop,
+            // footGuide,
             alertTip,
-            footGuide
         },
 
         computed: {
@@ -97,6 +111,10 @@
             },
             async init() {
                 this.airPlaneData = await getAirplaneDevice();
+                this.airPlane = await getAirplane();
+                this.airPlaneData = this.airPlaneData.data;
+                this.oldPlaneData = this.airPlaneData;
+                console.log(this.oldPlaneData);
             },
             selectOrganiz(name) {
                 console.log(name);
@@ -122,6 +140,20 @@
                 const res = updateAirplaneDevice(newData);
                 this.showAlert = true;
                 this.alertText = '更换成功';
+            },
+            search() {
+                console.log(this.oldPlaneData);
+                this.airPlaneData = this.oldPlaneData.filter(
+                    item => item.air_code === this.selectAirplane
+                )
+                console.log(this.airPlaneData);
+
+            },
+            searchAll() {
+                this.airPlaneData = this.oldPlaneData;
+            },
+            toLocation() {
+                this.$router.push('airplaneDevice');
             }
         }
     }
@@ -130,17 +162,18 @@
 <style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container {
-        padding-top: 2.35rem;
+        min-height: 700PX;
+        // padding-top: 2.35rem;
         font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
         button {
-            @include sc(.65rem, #fff);
+            @include sc(.5rem, #fff);
             font-family: Helvetica Neue, Tahoma, Arial;
             padding: .28rem .4rem;
             border: 1px;
             margin-top: 0.5rem;
             background-color: #3792e5;
-            width: 100%;
+            // width: 100%;
             margin-bottom: 2rem;
         }
         .profileinfopanel-upload {
@@ -166,18 +199,18 @@
             background-color: #eee;
             height: 0.8rem;
             width: 8rem;
-            font-size: 12PX;
+            font-size: 0.5rem;
             line-height: 0.8rem;
             padding-left: 0.2rem;
         }
         .showDevice {
-            margin-left: 40PX;
+            margin-left: 0.5rem;
         }
             table {
                 text-align: center;
                 border: 1px solid #000;
                 border-collapse: collapse;
-                font-size: 12PX;
+                font-size: 14PX;
                 th {
                     border-collapse: collapse;
                 }
@@ -185,12 +218,36 @@
                     border: 1px solid #000;
                     width: 5rem;
                 }
+                tr {
+                    line-height: 0.8rem;
+                }
             }
             .changeButton {
                 padding: 5px;
                 background-color: red;
                 color: #fff;
             }
+        .seText {
+            display: inline-block;
+            padding: 0px;
+            @include sc(.9rem, #666);
+            font-size: 18PX;
+        }
+        .selectBox {
+                        display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+        }
+        select {
+            width: 3rem;
+            height: 1rem;
+        }
+        .icon {
+            position: fixed;
+            width: 10%;
+            bottom: 10%;
+            right: 7%;
+        }
     }
 
     .loginForm {
@@ -201,14 +258,9 @@
                 display: inline-block;
                     width: 40%;
                     background-color: #eee;
-                    font-size: 14PX;
+                    font-size: 0.4rem;
                     padding: 0.5rem;
             }
-        }
-        .seText {
-            display: inline-block;
-            padding: .6rem .8rem;
-            @include sc(.7rem, #666);
         }
         .input_container {
             display: flex;
@@ -267,7 +319,7 @@
             display: flex;
             align-items: center;
             .listbox {
-                font-size: 12PX;
+                font-size: 0.4rem;
                 position: absolute;
                 top: 74%;
                 left: 26%;
