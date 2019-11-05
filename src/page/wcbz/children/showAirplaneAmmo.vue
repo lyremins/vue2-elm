@@ -25,6 +25,7 @@
                 </tr>
             </table>
         </div>
+        <img @click="toLocation()" class="icon" src="../../../images/addIcon.png">
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
         <foot-guide :device="device"></foot-guide>
     </div>
@@ -137,6 +138,9 @@
             },
             searchAll() {
                 this.ammoData = this.oldPlaneData;
+            },
+            toLocation() {
+                this.$router.push('airplaneAmmo');
             }
         }
     }
@@ -148,6 +152,12 @@
         // padding-top: 2.35rem;
         font: 0.8rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
+        .icon {
+            position: fixed;
+            width: 10%;
+            bottom: 10%;
+            right: 7%;
+        }
         button {
             @include sc(.25rem, #fff);
             font-family: Helvetica Neue, Tahoma, Arial;

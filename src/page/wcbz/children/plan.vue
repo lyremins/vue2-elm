@@ -2,7 +2,7 @@
   	<div class="city_container">
         <p>计划名称：</p>
         <input v-model="formData.name" placeholder="计划名称" class="select" type="text">
-        <p>输入出厂日期：</p>
+        <p>计划日期：</p>
         <mt-field placeholder="请输入出厂日期" type="date" v-model="formData.dateTime"></mt-field>
         <p>输入总人数：</p>
         <input v-model="formData.totalNumber" placeholder="总人数" class="select" type="text">
@@ -33,8 +33,8 @@
                 <p>设置起落次数：</p>
                 <input v-model="formData.upDownNumber[index]" placeholder="起落次数" class="select" type="text">
                 <p>输入飞行任务时间：</p>
-                <!-- <input v-model="formData.flightTime[index]" placeholder="飞行任务时间" class="select" type="text"> -->
-                <mt-field placeholder="飞行任务时间" type="time" v-model="formData.flightTime[index]"></mt-field>
+                <input v-model="formData.flightTime[index]" placeholder="飞行任务时间" class="selectTime" type="text"> 小时
+                <!-- <mt-field placeholder="飞行任务时间" type="time" v-model="formData.flightTime[index]"></mt-field> -->
                 <!-- <p>携弹类型：</p>
                 <div class="xd">
                     {{xdType}}
@@ -332,6 +332,12 @@
         }
         .select {
             width: 100%;
+            background-color: #e6e6e6;
+            font-size: 14PX;
+            padding: 0.5rem;
+        }
+        .selectTime {
+            width: 70%;
             background-color: #e6e6e6;
             font-size: 14PX;
             padding: 0.5rem;

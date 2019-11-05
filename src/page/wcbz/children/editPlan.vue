@@ -188,9 +188,10 @@
             margin-bottom: 2rem;
         }
         .showList {
-            margin-left: 20PX;
+            // margin-left: 20PX;
             input {
                 width: 100%;
+                font: 0.6rem/1.75rem "Microsoft YaHei";
             }
         }
         .airplane {
@@ -198,7 +199,7 @@
             position: relative;
         }
         .airplaneContent {
-            margin-left: 40PX;
+            // margin-left: 40PX;
         }
         .oldButton {
             border: 1px solid #3892e5;
@@ -241,7 +242,7 @@
             // padding: 0.5rem;
             width: 100%;
             margin-top: 0.6rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             text-align: center;
         }
     }

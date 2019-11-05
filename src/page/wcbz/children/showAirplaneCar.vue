@@ -18,6 +18,7 @@
                 </tr>
             </table>
         </div>
+        <img @click="toLocation()" class="icon" src="../../../images/addIcon.png">
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
         <!-- <foot-guide></foot-guide> -->
     </div>
@@ -110,6 +111,9 @@
                 this.airPlaneData.data[this.airplaneIndex].device[index].isCheck = !this.airPlaneData.data[this.airplaneIndex].device[index].isCheck;
                 this.airPlaneData.data = Object.assign([],this.airPlaneData.data);
                 console.log(this.airPlaneData.data);
+            },
+            toLocation() {
+                this.$router.push('airplaneCar');
             }
         }
     }
@@ -122,6 +126,12 @@
         font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
         min-height: 800PX;
+        .icon {
+            position: fixed;
+            width: 10%;
+            bottom: 10%;
+            right: 7%;
+        }
         button {
             @include sc(.65rem, #fff);
             font-family: Helvetica Neue, Tahoma, Arial;

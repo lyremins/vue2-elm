@@ -3,7 +3,7 @@
 
         <!-- {{mapLists}} -->
         <!-- <SheetList v-for="(item,index) in airPlaneData.data" :item="item"></SheetList> -->
-        <div @click="editPlan(item.plan_id)" class="showPlan" v-if="showTodayPlan && toTimeStamp(item.dateTime) === dayTime" v-for="(item,index) in airPlaneData.data" >
+        <div @click="editPlan(item.plan_id)" class="showPlan" v-if="showTodayPlan && toTimeStamp(item.dateTime) >= dayTime" v-for="(item,index) in airPlaneData.data" >
            <i class="downIcon"> </i><div @click="changeList(index)" > 计划名称：{{item.name}}</div>
             <div class="showList" v-show="item.isShow">
                 <p style="">计划名称：{{item.name}}</p>
@@ -24,8 +24,8 @@
         <div>
             <div v-show="!showOld" class="oldButton" @click="showOldPlan()">查看往期计划 -></div>
             <div v-show="!showTodayPlan" class="oldButton" @click="showOldPlan()">查看当日计划 -></div>
-            <div @click="toAddPlan()" class="addButton">添加飞行计划 -></div>
-            <div @click="editPlan(item.plan_id)" class="oldShow" v-show="showOld" v-if="toTimeStamp(item.dateTime) != dayTime" v-for="(item,index) in airPlaneData.data" >
+            <div @click="showAddPlan()" class="addButton">添加飞行计划 -></div>
+            <div @click="editPlan(item.plan_id)" class="oldShow" v-show="showOld" v-if="toTimeStamp(item.dateTime) <= dayTime" v-for="(item,index) in airPlaneData.data" >
                 <i class="downIcon"> </i><div @click="changeList(index)" >计划名称：{{item.name}}</div>
                 <div class="showList" v-show="item.isShow">
                     <p style="">计划名称：{{item.name}}</p>
@@ -44,6 +44,13 @@
             </div>
         </div>
         </div>
+        <mt-popup
+        v-model="popupVisible">
+            <div class="viewDate">
+                请选择创建计划的日期：<mt-field placeholder="计划日期" type="date" v-model="viewTime"></mt-field>
+                <div @click="toAddPlan()" class="NewButton">创建</div>
+            </div>
+        </mt-popup>
     </div>
 </template>
 
@@ -65,6 +72,8 @@
                 showOld: false,
                 device: this.$util.getUrlKey('device'),
                 showTodayPlan: true,
+                popupVisible: false,
+                dayTime: '',
                 formData: {
                     name:'ddd',
                     dateTime: '',
@@ -138,20 +147,28 @@
                 this.airPlaneData = Object.assign({},this.airPlaneData);
             },
             toAddPlan() {
+                console.log('2222');
                 let number = 0;
-                this.airPlaneData.data.forEach(element => {
-                    if (this.toTimeStamp(element.dateTime) === (this.dayTime)) {
-                        this.$toast({
-                            message: '当日已存在飞行计划',
-                            duration: 800,
-                            className: 'noticeError'
-                        });
-                        number = 1;
-                    }
-                });
+                if (this.dayTime === this.toTimeStamp(this.viewTime)) {
+                    this.airPlaneData.data.forEach(element => {
+                        if (this.toTimeStamp(element.dateTime) === (this.dayTime)) {
+                            console.log(element.dateTime);
+                            console.log(this.dayTime);
+                            this.$toast({
+                                message: '当日已存在飞行计划',
+                                duration: 3000,
+                                className: 'noticeError'
+                            });
+                            number = 1;
+                        }
+                    });
+                }
                 if (!number) {
                     this.$router.push('plan');
                 }
+            },
+            showAddPlan() {
+                this.popupVisible = true;
             },
             toTimeStamp(time) {
                 time = time.replace(/-/g, '/') // 把所有-转化成/
@@ -218,12 +235,19 @@
             background-color: #3892e5;
             color: #fff;
         }
+        .NewButton {
+            margin-top: 20PX;
+            padding: 5px;
+            background-color: #3892e5;
+            color: #fff;
+            text-align: center;
+        }
         .showPlan {
-            height: 16rem;
+            // height: 16rem;
             overflow: scroll;
         }
         .oldShow {
-            height: 16rem;
+            // height: 16rem;
             overflow: scroll;
         }
         .downIcon {
@@ -238,6 +262,12 @@
         .noticeError {
             color: #fff!important;
         }
+        .viewDate {
+            padding: 1rem;
+        }
+    }
+    .mint-toast {
+        z-index: 3003!important;
     }
 
 
