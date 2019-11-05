@@ -2,10 +2,10 @@
   	<div class="city_container">
         <p class="title1">参加计划的飞机：</p>
         <div class="box">
-            <div @click="toflyDetail(value.airplane_id)" class="boxData" >
-            <div v-for="v in arrayData[0]">
+            <div class="boxData" >
+            <div v-for="v in enterArrayData[0]">
                 <!-- {{v}} -->
-                <div v-for="(value,index) in airPlaneData.data" v-if="value.code === v.airName">
+                <div @click="toflyDetail(value.airplane_id)" v-for="(value,index) in airPlaneData.data" v-if="value.code === v.airName">
                     <div class="listBox">
                         <img class="flyIcon" src="../../../images/flyIcon.png">
                         <span class="icon iconTsk" :class="{'wh': value.state === '完好',
@@ -14,8 +14,9 @@
                                                 value.state === '排故',
                                                 'try': value.state === '试飞' ||
                                                 value.state === '待退役'}">{{value.state}}</span>
+                        <p>进场状态：{{value.enter || '未进场'}}</p>
                         <p>起落次数：{{value.airUpOrDown}}</p>
-                        <p>已进场：{{value.code}}</p>
+                        <p>飞机编号：{{value.code}}</p>
                         <div v-show="nowIndex === value.airplane_id" class="floatBox">
                             <p style="">飞机型号：{{value.code}}</p>
                             <p style="">部队编号：{{value.army_id}}</p>
@@ -30,12 +31,14 @@
         </div>
         <p class="title1">未计划的飞机：</p>
         <div class="box">
-            <div @click="toflyDetail(value.airplane_id)" class="boxData" v-for="(value,index) in airPlaneData.data" v-if="index !== '__v' && value.code !== v.airName">
-                <div v-for="v in arrayData[0]" >
-                    {{v.airName}} - {{value.code}}
-                    <div class="noPlanBox">
-                        <!-- {{value.code}} - {{v.airname}} -->
-                        <!-- <i class="fa fa-fighter-jet"></i> -->
+            <div class="boxData" >
+            <div
+                v-for="(value,index) in airPlaneData.data"
+                v-if="value.code !== 'A1' && value.code !== 'A3'"
+                @click="toflyDetail(value.airplane_id)" >
+                    <!-- {{v.airName}} - {{value.code}} -->
+                    <div>
+                    <div class="listBox">
                         <img class="flyIcon" src="../../../images/flyIcon.png">
                         <span class="icon iconTsk" :class="{'wh': value.state === '完好',
                                                 'fault': value.state === '定检' ||
@@ -43,17 +46,18 @@
                                                 value.state === '排故',
                                                 'try': value.state === '试飞' ||
                                                 value.state === '待退役'}">{{value.state}}</span>
-                        <p>{{value.code}}</p>
+                        <p>飞机编号：{{value.code}}</p>
                         <p>起落次数：{{value.airUpOrDown}}</p>
                         <div v-show="nowIndex === value.airplane_id" class="floatBox">
-                            <p style="">飞机型号：{{value.code}}</p>
+                            <p style="">飞机编号：{{value.code}}</p>
                             <p style="">部队编号：{{value.army_id}}</p>
                             <p style="">单位：{{value.unit}}</p>
                             <p style="">起落：{{value.stageUpOrDown}}</p>
                             <p style="">时长：{{value.airHour}}</p>
                         </div>
                     </div>
-                </div>
+                    </div>
+            </div>
             </div>
         </div>
         <button @click="toPlan()" class="more">上报飞机状态</button>
@@ -138,7 +142,7 @@
                 dayTime: '',
                 planIndex: [],
                 newData: [],
-                arrayData: []
+                enterArrayData: []
             }
         },
 
@@ -181,20 +185,51 @@
                     }
                 });
                 this.ensureData = await getEnsure();
-                this.arrayData = [];
+                this.enterArrayData = [];
                 this.planData.data.forEach((element,index) => {
                     console.log('333333', element.dateTime);
                     console.log(element);
                     element.isShow = false;
                     if (this.toTimeStamp(element.dateTime) === this.toTimeStamp(this.dayTime)) {
-                        this.arrayData.push(element.airData);
+                        this.enterArrayData.push(element.airData);
                     }
                 });
-                console.log(this.arrayData);
+                console.log("---------------", this.enterArrayData);
                 Object.keys(this.mapLists).forEach((key) => {
                     this.planIndex.push(key);
                 });
                 console.log("33333", this.planIndex);
+                const data = [];
+                const noData = [];
+                const name = [];
+                this.enterArrayData[0].forEach(plan => {
+                    name.push(plan.airName);
+                });
+                console.log('@@@@@@@@', name);
+                this.airPlaneData.data.forEach(airplane => {
+                    this.enterArrayData[0].forEach(plan => {
+                        if (plan.airName === airplane.code) {
+                            data.push(airplane);
+                        } else {
+                            noData.push(airplane);
+                        }
+                    });
+                });
+                this.airPlaneData.data.filter ( item => {
+                    console.log(name.indexOf(item.code));
+                    name.indexOf(item.code) !== -1;
+                })
+                console.log('22222222', this.airPlaneData.data);
+                // this.airPlaneData.data.forEach( airplane => {
+                //     console.log(airplane.code);
+                //     name.forEach(element => {
+                //         if (airplane.code != element.airName) {
+                //             console.log("%%%%%%%", airplane.code)
+                //         }
+                //     });
+                // })
+                // this.airPlaneData.data.filter((item.code) => this.enterArrayData[0].indexOf(item.code)==-1)
+                console.log('!!!!!!!!!!!', noData);
                 // this.planIndex.forEach(elements => {
                 //     this.airPlaneData.data.forEach(element => {
                 //         if (elements === element.code) {
@@ -296,15 +331,19 @@
                 margin: 0 10%;
         }
         .box {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
+            // display: flex;
+            // flex-direction: row;
+            // flex-wrap: wrap;
             margin-bottom: 0.4rem;
-            justify-content: space-between;
+            // justify-content: space-between;
             .boxData {
                 position: relative;
-                // width: 45%;
                 display: flex;
+                flex-wrap: wrap;
+                div {
+                    width: 165PX;
+                }
+                // width: 45%;
             }
             .icon {
                 position: absolute;
@@ -321,7 +360,7 @@
                 width: 1.6rem;
             }
             p {
-                font-size: 16PX;
+                font-size: 12PX;
                 text-align: center;
             }
             .floatBox {
@@ -386,6 +425,7 @@
         }
         .listBox {
             text-align: center;
+            position: relative;
         }
         .noPlanBox {
             text-align: center;
