@@ -341,7 +341,7 @@
                 display: flex;
                 flex-wrap: wrap;
                 div {
-                    width: 165PX;
+                    width: 7rem;
                 }
                 // width: 45%;
             }
