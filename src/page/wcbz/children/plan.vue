@@ -1,7 +1,5 @@
 <template>
   	<div class="city_container">
-        <head-top v-show="device !== 'h5'" head-title="添加飞行任务" go-back='true'>
-        </head-top>
         <p>计划名称：</p>
         <input v-model="formData.name" placeholder="计划名称" class="select" type="text">
         <p>输入出厂日期：</p>
@@ -92,7 +90,6 @@
         <button @click="submit()" class="button">预览计划</button>
         <button @click="bztask()" class="button">创建保障任务</button>
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
-    <footGuide :device="device"></footGuide>
     </div>
 </template>
 
@@ -194,7 +191,6 @@
         mixins: [mixin],
 
         components:{
-            headTop,
             alertTip
         },
 
