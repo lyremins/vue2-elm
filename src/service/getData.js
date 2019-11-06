@@ -353,10 +353,31 @@ export const getAirplaneById = airplane_id => fetch('/wcbz/getAirplane/' + airpl
 export const getOrganiz = () => fetch('/wcbz/getOrganiz');
 
 /**
+ * 添加组织架构
+ */
+
+export const addOrganiz = data => fetch('/wcbz/addOrganiz',data,'POST');
+
+/**
+ * 更新配置信息
+ */
+
+export const updateOrganiz = data => fetch('/wcbz/updateOrganiz', data, 'POST');
+
+/**
+ * 更新用户组织架构
+ */
+
+export const updatePersonOrganiz = data => fetch('/wcbz/updatePersonOrganiz', data, 'POST');
+
+/**
  * 获取故障详情
  */
 
-export const getFault = () => fetch('/wcbz/getFault');
+export const getFault = () => fetch('/wcbz/getFault'); getAirplaneToPlan
+
+
+export const getAirplaneToPlan = () => fetch('/wcbz/getAirplaneToPlan');
 
 /**
  * 添加故障详情

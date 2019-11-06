@@ -6,8 +6,10 @@ import {routerMode} from './config/env'
 import './config/rem'
 import FastClick from 'fastclick'
 import * as util from './util';
+import ElementUI from 'element-ui'
 import { Progress,Field,Toast,Popup,DatetimePicker } from 'mint-ui';
 import 'mint-ui/lib/style.css';
+import 'element-ui/lib/theme-chalk/index.css'
 
 if ('addEventListener' in document) {
     document.addEventListener('DOMContentLoaded', function() {
@@ -20,6 +22,7 @@ Vue.component(Progress.name, Progress);
 Vue.component(Field.name, Field);
 Vue.component(Popup.name, Popup);
 Vue.component(DatetimePicker.name, DatetimePicker);
+Vue.use(ElementUI);
 Vue.prototype.$toast = Toast;
 Vue.prototype.$util = util;
 const router = new VueRouter({

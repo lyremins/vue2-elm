@@ -1,7 +1,7 @@
 <template>
   	<div class="city_container">
-        <p class="title1">参加计划的飞机：</p>
-        <div class="box">
+        <p @click="showJoinPlan = !showJoinPlan" class="title1">参加计划的飞机：</p>
+        <div v-show="showJoinPlan" class="box">
             <div class="boxData" >
             <div v-for="v in enterArrayData[0]">
                 <!-- {{v}} -->
@@ -29,8 +29,8 @@
                 </div>
             </div>
         </div>
-        <p class="title1">未计划的飞机：</p>
-        <div class="box">
+        <p @click="showJoinNoPlan = !showJoinNoPlan" class="title1">未计划的飞机：</p>
+        <div v-show="showJoinNoPlan" class="box">
             <div class="boxData" >
             <div
                 v-for="(value,index) in airPlaneData.data"
@@ -142,7 +142,9 @@
                 dayTime: '',
                 planIndex: [],
                 newData: [],
-                enterArrayData: []
+                enterArrayData: [],
+                showJoinPlan: false,
+                showJoinNoPlan: false
             }
         },
 

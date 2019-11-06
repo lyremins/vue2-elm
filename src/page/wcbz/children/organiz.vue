@@ -1,106 +1,168 @@
 <template>
   	<div class="city_container">
-        <head-top v-show="device !== 'h5'" head-title="组织架构管理" go-back='true'>
-
-        </head-top>
-        <div class="list" v-for="v in organizData.data">
-            <div class="l1" @click="showChild1 = !showChild1" v-if="v.level === 0">
-               {{v.organizName}}
-            </div>
-            <div v-show="showChild1">
-                <div @click="showChild2 = !showChild2" class="l1" v-if="v.level === 1">
-                    {{v.organizName}}
-                </div>
-                <div v-show="showChild2">
-                    <div  class="l2"  v-for="vv in organizData.data" v-if="v.organiz_id === vv.parentID">
-                        {{vv.organizName}}
-                    </div>
-                </div>
-                <!-- <div v-show="showChild2">
-                    <div @click="showChild3 = !showChild3" class="l2" v-if="v.level === 2">
-                        {{v.organizName}}
-                    </div>
-                    <div v-show="showChild3">
-                        <div class="l3" v-if="v.level === 3">
-                            {{v.organizName}}
-                        </div>
-                    </div>
-                </div> -->
-            </div>
+       <div class="custom-tree-container">
+        <div class="block">
+            <!-- <p>使用 render-content</p>
+            <el-tree
+            :data="data"
+            show-checkbox
+            node-key="id"
+            default-expand-all
+            :expand-on-click-node="false"
+            :render-content="renderContent">
+            </el-tree> -->
         </div>
-        <footGuide :device="device"></footGuide>
+        <div class="block">
+            <el-tree
+            :data="data"
+            node-key="id"
+            default-expand-all
+            :expand-on-click-node="false">
+            <span @click="() => selectData(node.label)" class="custom-tree-node" slot-scope="{ node, data }">
+                <span>{{ node.label }}</span>
+                <span>
+                <el-button
+                    type="text"
+                    size="mini"
+                    @click="() => append(data)">
+                    添加
+                </el-button>
+                <el-button
+                    type="text"
+                    size="mini"
+                    @click="() => remove(node, data)">
+                    删除
+                </el-button>
+                </span>
+            </span>
+            </el-tree>
+        </div>
+        </div>
+        <div class="inputClass">
+            <input placeholder="在此输入单位名称" type="text" v-model="test">
+        </div>
+        <div class="buttonBox">
+            <button @click="save()"  class="button">保存</button>
+            <button @click="saveComponay()" class="button">保存我的单位</button>
+        </div>
     </div>
 </template>
 
 <script>
-    import headTop from 'src/components/header/head'
-    import { getOrganiz } from '../../../service/getData';
-    import mixin from '../../../mixin'
+import { addOrganiz,getOrganiz,updateOrganiz,updatePersonOrganiz } from '../../../service/getData';
+   let id = 1000;
 
-    export default {
-    	data(){
-            return{
-                organizData: {},
-                showChild1: false,
-                showChild2: true,
-                showChild3: true,
-                device: this.$util.getUrlKey('device')
+  export default {
+    data() {
+      const data = [];
+      return {
+        test: '',
+        popupVisible: false,
+        orData:{},
+        data: JSON.parse(JSON.stringify(data)),
+        data: JSON.parse(JSON.stringify(data)),
+        user_id: this.$util.getUrlKey('uid'),
+        select: [],
+        company: ''
+      }
+    },
+    mounted() {
+        this.getData();
+    },
 
-            }
+    methods: {
+        selectData(data) {
+            this.company = data;
         },
-
-        mounted(){
-            this.initData();
-        },
-
-        components:{
-            headTop
-        },
-
-        computed:{
-
-        },
-        mixins: [mixin],
-
-        methods:{
-            async initData(){
-                this.organizData = await getOrganiz();
-            }
+      async getData() {
+        const data = await getOrganiz();
+        this.orData = data.data;
+        this.data = data.data[0].organizArray;
+      },
+      saveComponay() {
+          updatePersonOrganiz({
+              user_id: this.user_id,
+              orgname: this.company
+          })
+          this.$toast('更新单位成功');
+      },
+      save() {
+          updateOrganiz({
+              organiz_id: this.orData[0].organiz_id,
+              organizArray: this.data
+          });
+          this.$toast('保存成功');
+      },
+      inputText(data) {
+          this.popupVisible = !this.popupVisible;
+      },
+      append(data) {
+        if (!this.test) {
+            this.$toast('请输入单位名称');
+            return ;
         }
+        const newChild = { id: id++, label: this.test, children: [] };
+        if (!data.children) {
+          this.$set(data, 'children', []);
+        }
+        data.children.push(newChild);
+        this.test = "";
+      },
+
+      remove(node, data) {
+        const parent = node.parent;
+        const children = parent.data.children || parent.data;
+        const index = children.findIndex(d => d.id === data.id);
+        children.splice(index, 1);
+      },
+      renderContent(h, { node, data, store }) {
+        return(
+          <span class="custom-tree-node">
+            <span>{node.label}</span>
+            <span>
+              <el-button size="mini" type="text" on-click={ () => this.append(data) }>Append</el-button>
+              <el-button size="mini" type="text" on-click={ () => this.remove(node, data) }>Delete</el-button>
+            </span>
+          </span>);
+      }
     }
+  };
 
 </script>
 
 <style lang="scss" scoped>
     @import 'src/style/mixin';
-    .city_container{
-        padding-top: 2.35rem;
-        font: 0.6rem/1.75rem "Microsoft YaHei";
-        margin: 0 1rem;
-        .button {
-            background-color: #3190e8;
-            color: #fff;
-            padding: 0.5rem;
-            width: 100%;
-            margin-top: 0.6rem;
-        }
-        .l1 {
-            margin-left: 0.5rem;
-            cursor: pointer;
-        }
-        .l2 {
-            margin-left: 1.2rem;
-            cursor: pointer;
-        }
-        .l3 {
-            margin-left: 1.5rem;
-            cursor: pointer;
-        }
-        .list {
-            background-color: #fff;
-            border-bottom: 1px solid #e6e6e6;
-        }
+    .city_container {
+        margin-top: 50PX;
     }
+    .custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8PX;
+  }
+  .inputClass {
+      text-align: center;
+      input {
+          width: 80%;
+          height: 30PX;
+          border: 1px solid #e8e8e8;
+          padding: 5PX;
+      }
+  }
+  .buttonBox {
+      text-align: center;
+      margin-top: 20PX;
+  }
+  .button {
+      width: 100%;
+      background-color: cadetblue;
+      color: #fff;
+      padding: 15PX;
+      margin: 10PX auto;
+  }
 
 
 
