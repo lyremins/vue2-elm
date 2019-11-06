@@ -143,7 +143,7 @@
                 planIndex: [],
                 newData: [],
                 enterArrayData: [],
-                showJoinPlan: false,
+                showJoinPlan: true,
                 showJoinNoPlan: false
             }
         },
