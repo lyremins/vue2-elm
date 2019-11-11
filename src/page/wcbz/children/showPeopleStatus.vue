@@ -1,13 +1,13 @@
 <template>
   	<div class="city_container">
-        <p @click="showJoinPlan = !showJoinPlan" class="title1">参加计划的飞机：</p>
+        <p @click="showJoinPlan = !showJoinPlan" class="title1">参加计划的人员：</p>
         <div v-show="showJoinPlan" class="box">
             <div class="boxData" >
             <div v-for="v in enterArrayData[0]">
                 <!-- {{v}} -->
                 <div @click="toflyDetail(value.airplane_id)" v-for="(value,index) in airPlaneData.data" v-if="value.code === v.airName">
                     <div class="listBox">
-                        <img class="flyIcon" src="../../../images/flyIcon.png">
+                        <!-- <img class="flyIcon" src="../../../images/flyIcon.png">
                         <span class="icon iconTsk" :class="{'wh': value.state === '完好',
                                                 'fault': value.state === '定检' ||
                                                 value.state === '大修' ||
@@ -15,8 +15,8 @@
                                                 'try': value.state === '试飞' ||
                                                 value.state === '待退役'}">{{value.state}}</span>
                         <p>进场状态：{{value.enter || '未进场'}}</p>
-                        <p>起落次数：{{value.airUpOrDown}}</p>
-                        <p>飞机编号：{{value.code}}</p>
+                        <p>起落次数：{{value.airUpOrDown}}</p> -->
+                        <!-- <p>飞机编号：{{value.code}}</p> -->
                         <div v-show="nowIndex === value.airplane_id" class="floatBox">
                             <p style="">飞机型号：{{value.code}}</p>
                             <p style="">部队编号：{{value.army_id}}</p>
@@ -25,11 +25,18 @@
                             <p style="">时长：{{value.airHour}}</p>
                         </div>
                     </div>
+                    <div class="personList">
+                        <div>飞机编号：{{value.code}}</div>
+                        <!-- <p>机组人员</p> -->
+                        <div v-for="v in pp_name[value.code]">
+                            人员名称：{{v.user_name}}
+                        </div>
+                    </div>
                 </div>
                 </div>
             </div>
         </div>
-        <p @click="showEnsure = !showEnsure" class="title1">参加保障任务的飞机：</p>
+        <p @click="showEnsure = !showEnsure" class="title1">参加保障任务的人员：</p>
         <div v-show="showEnsure" class="box">
             <div class="boxData" >
             <div
@@ -38,7 +45,7 @@
                     <!-- {{v.airName}} - {{value.code}} -->
                     <div>
                     <div class="listBox">
-                        <img class="flyIcon" src="../../../images/flyIcon.png">
+                        <!-- <img class="flyIcon" src="../../../images/flyIcon.png">
                         <span class="icon iconTsk" :class="{'wh': value.state === '完好',
                                                 'fault': value.state === '定检' ||
                                                 value.state === '大修' ||
@@ -53,14 +60,21 @@
                             <p style="">单位：{{value.unit}}</p>
                             <p style="">起落：{{value.stageUpOrDown}}</p>
                             <p style="">时长：{{value.airHour}}</p>
+                        </div> -->
+                    </div>
+                    <div>
+                        <div>飞机编号：{{value[0].code}}</div>
+                        <div v-for="v in pp_name[value[0].code]">
+                            {{v.user_name}}
                         </div>
                     </div>
                     </div>
             </div>
             </div>
         </div>
-        <p @click="showJoinNoPlan = !showJoinNoPlan" class="title1">无任务的飞机：</p>
+        <p @click="showJoinNoPlan = !showJoinNoPlan" class="title1">无任务的人员：</p>
         <div v-show="showJoinNoPlan" class="box">
+            <div class="total">未参加任务的人员总数：{{noDataL}}</div>
             <div class="boxData" >
             <div
                 v-for="(value,index) in noData"
@@ -68,7 +82,7 @@
                     <!-- {{v.airName}} - {{value.code}} -->
                     <div>
                     <div class="listBox">
-                        <img class="flyIcon" src="../../../images/flyIcon.png">
+                        <!-- <img class="flyIcon" src="../../../images/flyIcon.png">
                         <span class="icon iconTsk" :class="{'wh': value.state === '完好',
                                                 'fault': value.state === '定检' ||
                                                 value.state === '大修' ||
@@ -83,6 +97,12 @@
                             <p style="">单位：{{value.unit}}</p>
                             <p style="">起落：{{value.stageUpOrDown}}</p>
                             <p style="">时长：{{value.airHour}}</p>
+                        </div> -->
+                    </div>
+                    <div>
+                        <div style="">飞机编号：{{value.code}}</div>
+                        <div v-for="v in pp_name[value.code]">
+                            人员名称：{{v.user_name}}
                         </div>
                     </div>
                     </div>
@@ -90,7 +110,7 @@
             </div>
         </div>
 
-        <button @click="toPlan()" class="more">上报飞机状态</button>
+        <button @click="toPlan()" class="more">上报人员状态</button>
         <!-- <p class="title">任务状态</p>
         <div class="box">
         <div class="boxData" v-for="(value,index) in taskData.data[0]" v-if="index !== '__v'">
@@ -119,7 +139,8 @@
         updateDevicestate,
         getVehicle,
         getPlan,
-        getEnsure } from '../../../service/getData';
+        getEnsure,
+        getPersonnel } from '../../../service/getData';
         import mixin from '../../../mixin'
 
     export default {
@@ -178,6 +199,10 @@
                 showEnsure: false,
                 noData: [],
                 enterEnsureData: [],
+                personnelData: {},
+                pp_name: {},
+                noDataL: 0,
+                enterEnsureData: [],
                 ensureDdd: []
             }
         },
@@ -207,7 +232,14 @@
                 this.taskData = await getTaskstate();
                 this.deviceStateData = await getVehicle();
                 this.planData = await getPlan();
-                console.log(this.planData);
+                this.personnelData = await getPersonnel();
+                const pp_name = [];
+                this.personnelData.data.forEach(plan => {
+                    this.pp_name[plan.bindAir] || (this.pp_name[plan.bindAir] = []);
+                    this.pp_name[plan.bindAir].push(plan);
+                });
+
+                console.log("pp_namepp_namepp_name", this.pp_name);
                 this.planData.data.forEach(element => {
                     this.totalQlNumber += parseInt(element.upDownNumber);
                     this.totalJcNumber += parseInt(element.totalNumber);
@@ -231,8 +263,8 @@
                                     e.plan[0].airData.forEach(aaaa => {
                                         console.log("aaa.airName",aaaa.airName);
                                         if (aaa.code === aaaa.airName) {
-                                            // console.log("aaa.airName",aaaa.airName);
-                                            // console.log("aaa.code",aaa.code);
+                                            console.log("aaa.airName",aaaa.airName);
+                                            console.log("aaa.code",aaa.code);
                                             this.enterEnsureData.push(aaa);
                                         }
                                     });
@@ -254,18 +286,7 @@
                 });
                 console.log("ensuredddensureddd",ensureddd);
                 this.ensureDdd = ensureddd;
-                this.ensureDdd = Object.assign({},ensureddd);
-                this.ensureDdd = [];
-                this.airPlaneData.data.forEach(element => {
-                    Object.keys(ensureddd).forEach((key,value) => {
-                        console.log("value",value);
-                        console.log("key",key);
-                        if (element.code === key) {
-                            this.ensureDdd.push(element);
-                        }
-                    });
-                });
-                console.log("this.ensureDdd",this.ensureDdd);
+                this.ensureDdd = Object.assign({},ensureddd)
 
                 this.enterArrayData = [];
                 this.planData.data.forEach((element,index) => {
@@ -281,7 +302,6 @@
                     this.planIndex.push(key);
                 });
                 console.log("33333", this.planIndex);
-                console.log(this.enterArrayData);
                 const data = [];
                 const noData = [];
                 const name = [];
@@ -293,13 +313,21 @@
                     console.log('@@@@@@@@', name);
                 }
                 this.airPlaneData.data.forEach(airplane => {
-                    if (!this.enterArrayData) {
-                        this.noData.push(airplane);
+                    if (!this.enterArrayData.length) {
+                    this.noData.push(airplane);
                     } else if (!name.hasOwnProperty(airplane.code) && !ensureddd.hasOwnProperty(airplane.code)) {
                         this.noData.push(airplane);
                     }
                 });
-                console.log("%%%%%%%%%", noData);
+                console.log("test", this.pp_name);
+                this.noData.forEach(element => {
+                    if (this.pp_name.hasOwnProperty(element.code)) {
+                        console.log('^^^^^^^^',this.pp_name[element.code].length )
+                        this.noDataL +=this.pp_name[element.code].length;
+                    }
+                });
+                console.log("%%%%%%%%%", this.noData);
+
                 this.airPlaneData.data.filter ( item => {
                     console.log(name.indexOf(item.code));
                     name.indexOf(item.code) !== -1;
@@ -383,6 +411,7 @@
         padding-top: 0.35rem;
         font: "Microsoft YaHei";
         margin: 0 1rem;
+        text-align: center;
         .button {
             background-color: #3190e8;
             color: #fff;
@@ -421,12 +450,17 @@
             // flex-wrap: wrap;
             margin-bottom: 0.4rem;
             // justify-content: space-between;
+            .total {
+                font-size: 14PX;
+            }
             .boxData {
                 position: relative;
                 display: flex;
                 flex-wrap: wrap;
                 div {
                     width: 7rem;
+                    font-size: 14PX;
+                    margin-bottom: 10PX;
                 }
                 // width: 45%;
             }
@@ -445,8 +479,8 @@
                 width: 1.6rem;
             }
             p {
-                font-size: 12PX;
-                text-align: center;
+                font-size: 14PX;
+                // text-align: center;
             }
             .floatBox {
                 position: absolute;
@@ -509,11 +543,14 @@
             width: 50%;
         }
         .listBox {
-            text-align: center;
+            // text-align: center;
             position: relative;
         }
         .noPlanBox {
             text-align: center;
+        }
+        .personList {
+            font-size: 14PX;
         }
     }
 

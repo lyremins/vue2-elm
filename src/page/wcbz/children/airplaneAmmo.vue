@@ -1,8 +1,5 @@
 <template>
     <div class="city_container">
-        <head-top head-title="飞机-弹药关联" go-back='true'>
-        </head-top>
-
         <div class="radioBox" v-for="(value,index) in airPlaneData.data">
         <input class="radio" @change="changeSelect(index,value.isCheck)" v-model="air[index]" type="checkbox" :id="index" />
             <label :for="index">飞机编号：{{value.code}}</label>
@@ -13,23 +10,20 @@
                 </div>
             </div>
         </div>
-        <button @click="save()">保存信息</button>
-        <button @click="show()">查看关联信息</button>
-        <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
-        <foot-guide></foot-guide>
+        <div class="buttonGroup">
+            <button class="planButton" @click="save()">保存信息</button>
+            <button class="planButton" @click="show()">查看关联信息</button>
+        </div>
     </div>
 </template>
 
 <script>
-    import headTop from 'src/components/header/head'
-    import alertTip from 'src/components/common/alertTip'
     import {
         addAirplaneAmmo,
         getAirplane,
         getAmmo
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
-    import footGuide from 'src/components/footer/footer'
 
     export default {
         data() {
@@ -79,9 +73,6 @@
         },
 
         components: {
-            headTop,
-            alertTip,
-            footGuide
         },
 
         computed: {
@@ -126,7 +117,7 @@
                     });
                 });
                     this.showAlert = true;
-                    this.alertText = '添加成功';
+                    this.$toast('添加成功');
                 // let result = addAirplaneDevice(this.formData);
                 // if (result.status == 1) {
                 //     this.showAlert = true;
@@ -140,7 +131,6 @@
                 //     this.showAlert = true;
                 //     this.alertText = result.message;
                 // }
-                console.log(result)
             },
             closeTip() {
                 this.showAlert = false;
@@ -183,7 +173,7 @@
                 // console.log("6666", this.airPlaneData.data);
             },
             show() {
-                this.$router.push('airplaneAmmo');
+                this.$router.push('showairplaneAmmo');
             }
         }
     }
@@ -192,19 +182,43 @@
 <style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container {
-        padding-top: 2.35rem;
-        font: 0.6rem/1.75rem "Microsoft YaHei";
+        padding-top: 0.35rem;
+        font-size: 18PX;
         margin: 0 1rem;
-        button {
-            @include sc(.65rem, #fff);
-            font-family: Helvetica Neue, Tahoma, Arial;
-            padding: .28rem .4rem;
-            border: 1px;
-            margin-top: 0.5rem;
-            background-color: #3792e5;
-            width: 100%;
-            margin-bottom: 2rem;
+        padding-bottom: 6rem;
+        .radio {
+            zoom: 2;
+            vertical-align: middle;
         }
+        .radioBox {
+            line-height: 30PX;
+        }
+        .buttonGroup {
+            position: fixed;
+            left: 1px;
+            bottom: 0px;
+            width: 100%;
+            background-color: #fff;
+            padding: 10PX;
+            text-align: center;
+        }
+        .planButton {
+            background-color: #3190e8;
+            color: #fff;
+            padding: 0.5rem;
+            width: 49%;
+            font-size: 18PX;
+        }
+        // button {
+        //     @include sc(.65rem, #fff);
+        //     font-family: Helvetica Neue, Tahoma, Arial;
+        //     padding: .28rem .4rem;
+        //     border: 1px;
+        //     margin-top: 0.5rem;
+        //     background-color: #3792e5;
+        //     width: 100%;
+        //     margin-bottom: 2rem;
+        // }
         .profileinfopanel-upload {
             display: block;
             opacity: 0;

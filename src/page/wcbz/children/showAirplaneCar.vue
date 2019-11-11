@@ -2,6 +2,15 @@
     <div class="city_container">
         <!-- <head-top head-title="飞机-车辆关联" go-back='true'>
         </head-top> -->
+        <div class="selectBox">
+
+            <span class="seText">选择飞机：</span>
+            <select v-model="selectAirplane">
+                <option v-for="v in airPlane.data" :value="v.code">{{v.code}}</option>
+            </select>
+            <button @click="search()" class="search">查询</button>
+            <button @click="searchAll()" class="search">查询全部</button>
+        </div>
         <div>
             <table>
                 <tr>
@@ -10,7 +19,7 @@
                     <td>车辆类型</td>
                     <td>行驶里程</td>
                 </tr>
-                <tr v-for="v in airPlaneData.data">
+                <tr v-for="v in airPlaneData">
                     <td>{{v.air_code}}_{{v.car_code}}</td>
                     <td>{{v.airplane_type}}</td>
                     <td>{{v.car_code}}</td>
@@ -28,7 +37,8 @@
     import headTop from 'src/components/header/head'
     import alertTip from 'src/components/common/alertTip'
     import {
-        getAirplaneCar
+        getAirplaneCar,
+        getAirplane
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
     import footGuide from 'src/components/footer/footer'
@@ -65,6 +75,7 @@
                 showOrganiz: false,
                 airPlaneData: {},
                 deviceData: {},
+                airPlane: {},
                 checked: false,
                 subitem: {
                     isCheck: false
@@ -72,7 +83,9 @@
                 air: [],
                 newData: [],
                 device: [],
-                airplaneIndex: ''
+                airplaneIndex: '',
+                oldPlaneData: {},
+                selectAirplane: ''
             }
         },
 
@@ -95,7 +108,10 @@
                 this.showAlert = false;
             },
             async init() {
+                this.airPlane = await getAirplane();
                 this.airPlaneData = await getAirplaneCar();
+                this.airPlaneData = this.airPlaneData.data;
+                this.oldPlaneData = this.airPlaneData;
             },
             selectOrganiz(name) {
                 console.log(name);
@@ -114,32 +130,42 @@
             },
             toLocation() {
                 this.$router.push('airplaneCar');
-            }
+            },
+            search() {
+                console.log(this.oldPlaneData);
+                this.airPlaneData = this.oldPlaneData.filter(
+                    item => item.air_code === this.selectAirplane
+                )
+                console.log(this.airPlaneData);
+
+            },
+            searchAll() {
+                this.airPlaneData = this.oldPlaneData;
+            },
         }
     }
 </script>
 
 <style lang="scss" scoped>
     @import 'src/style/mixin';
-    .city_container {
-        padding-top: 2.35rem;
-        font: 0.6rem/1.75rem "Microsoft YaHei";
+   .city_container {
+        min-height: 700PX;
+        // padding-top: 2.35rem;
+        // font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
-        min-height: 800PX;
-        .icon {
-            position: fixed;
-            width: 10%;
-            bottom: 10%;
-            right: 7%;
+        select {
+            margin-left: -10px;
         }
         button {
-            @include sc(.65rem, #fff);
-            font-family: Helvetica Neue, Tahoma, Arial;
+            font-size: 16PX;
+            color: #fff;
+            // @include sc(.5rem, #fff);
+            // font-family: Helvetica Neue, Tahoma, Arial;
             padding: .28rem .4rem;
             border: 1px;
             margin-top: 0.5rem;
             background-color: #3792e5;
-            width: 100%;
+            // width: 100%;
             margin-bottom: 2rem;
         }
         .profileinfopanel-upload {
@@ -165,18 +191,18 @@
             background-color: #eee;
             height: 0.8rem;
             width: 8rem;
-            font-size: 12PX;
+            font-size: 0.5rem;
             line-height: 0.8rem;
             padding-left: 0.2rem;
         }
         .showDevice {
-            margin-left: 40PX;
+            margin-left: 0.5rem;
         }
             table {
                 text-align: center;
                 border: 1px solid #000;
                 border-collapse: collapse;
-                font-size: 12PX;
+                font-size: 14PX;
                 th {
                     border-collapse: collapse;
                 }
@@ -184,7 +210,38 @@
                     border: 1px solid #000;
                     width: 5rem;
                 }
+                tr {
+                    line-height: 0.8rem;
+                }
             }
+            .changeButton {
+                padding: 5px;
+                background-color: red;
+                color: #fff;
+            }
+        .seText {
+            display: inline-block;
+            padding: 0px;
+            @include sc(.9rem, #666);
+            font-size: 18PX;
+            position: relative;
+            top: 5px;
+        }
+        .selectBox {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        select {
+            width: 3rem;
+            height: 1rem;
+        }
+        .icon {
+            position: fixed;
+            width: 10%;
+            bottom: 10%;
+            right: 7%;
+        }
     }
 
     .loginForm {
@@ -195,14 +252,9 @@
                 display: inline-block;
                     width: 40%;
                     background-color: #eee;
-                    font-size: 14PX;
+                    font-size: 0.4rem;
                     padding: 0.5rem;
             }
-        }
-        .seText {
-            display: inline-block;
-            padding: .6rem .8rem;
-            @include sc(.7rem, #666);
         }
         .input_container {
             display: flex;
@@ -261,7 +313,7 @@
             display: flex;
             align-items: center;
             .listbox {
-                font-size: 12PX;
+                font-size: 0.4rem;
                 position: absolute;
                 top: 74%;
                 left: 26%;

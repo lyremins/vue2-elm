@@ -4,7 +4,7 @@
         <!-- {{mapLists}} -->
         <!-- <SheetList v-for="(item,index) in airPlaneData.data" :item="item"></SheetList> -->
         <div @click="editPlan(item.plan_id)" class="showPlan" v-if="showTodayPlan && toTimeStamp(item.dateTime) >= dayTime" v-for="(item,index) in airPlaneData.data" >
-           <i class="downIcon"> </i><div @click="changeList(index)" > 计划名称：{{item.name}}</div>
+           <i class="downIcon"> </i><div class="title" @click="changeList(index)" > 计划名称：{{item.name}}</div>
             <div class="showList" v-show="item.isShow">
                 <p style="">计划名称：{{item.name}}</p>
                 <p style="">计划日期：{{item.dateTime}}</p>
@@ -22,13 +22,14 @@
             </div>
         </div>
         <div>
-            <div v-show="!showOld" class="oldButton" @click="showOldPlan()">查看往期计划 -></div>
+            <!-- <div v-show="!showOld" class="oldButton" @click="showOldPlan()">查看往期计划 -></div>
             <div v-show="!showTodayPlan" class="oldButton" @click="showOldPlan()">查看当日计划 -></div>
-            <div @click="showAddPlan()" class="addButton">添加飞行计划 -></div>
-            <div @click="editPlan(item.plan_id)" class="oldShow" v-show="showOld" v-if="toTimeStamp(item.dateTime) <= dayTime" v-for="(item,index) in airPlaneData.data" >
-                <i class="downIcon"> </i><div @click="changeList(index)" >计划名称：{{item.name}}</div>
+            <div @click="showAddPlan()" class="addButton">添加飞行计划 -></div> -->
+            <div @click="editPlan(item.plan_id)" v-show="showOld" v-if="toTimeStamp(item.dateTime) <= dayTime" v-for="(item,index) in airPlaneData.data" >
+                <div>
+                <i class="downIcon"> </i><div class="title" @click="changeList(index)" >计划名称：{{item.name}}</div>
                 <div class="showList" v-show="item.isShow">
-                    <p style="">计划名称：{{item.name}}</p>
+                    <p >计划名称：{{item.name}}</p>
                     <input type="text" v-model="formData.name">
                     <p style="">计划日期：{{item.dateTime}}</p>
                     <p style="">总人数：{{item.totalNumber}}</p>
@@ -41,13 +42,20 @@
                             <p style="">飞行时间：{{v.flightTime}}</p>
                         </div>
                     </div>
+                 </div>
             </div>
         </div>
         </div>
+            <div class="buttonGroup">
+                <button class="planButton" @click="showAddPlan()">添加飞行计划</button>
+                <button v-show="!showOld" class="planButton" @click="showOldPlan()">查看往期计划</button>
+                <button v-show="!showTodayPlan" class="planButton" @click="showOldPlan()">查看当日计划</button>
+            </div>
         <mt-popup
         v-model="popupVisible">
             <div class="viewDate">
-                请选择创建计划的日期：<mt-field placeholder="计划日期" type="date" v-model="viewTime"></mt-field>
+                <input placeholder="计划日期" type="date" class="select" v-model="viewTime">
+                <!-- 请选择创建计划的日期：<mt-field placeholder="计划日期" type="date" v-model="viewTime"></mt-field> -->
                 <div @click="toAddPlan()" class="NewButton">创建</div>
             </div>
         </mt-popup>
@@ -164,7 +172,7 @@
                     });
                 }
                 if (!number) {
-                    this.$router.push('plan');
+                    this.$router.push(`plan?dateTime=${this.viewTime}`);
                 }
             },
             showAddPlan() {
@@ -180,7 +188,7 @@
                 this.showTodayPlan = !this.showTodayPlan;
             },
             editPlan(plan_id) {
-                this.$router.push(`/editPlan?plan_id=${plan_id}`)
+                this.$router.push(`/plan?plan_id=${plan_id}`)
             }
         }
     }
@@ -193,13 +201,43 @@
         padding-top: 0.35rem;
         font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
+        min-height: 800PX;
+        height: auto;
+        overflow: scroll;
+        margin-bottom: 4rem;
+        .buttonGroup {
+            position: fixed;
+            left: 1px;
+            bottom: 0px;
+            width: 100%;
+            background-color: #fff;
+            padding: 10PX;
+            text-align: center;
+        }
+        .planButton {
+            background-color: #3190e8;
+            color: #fff;
+            padding: 0.5rem;
+            width: 49%;
+            font-size: 16PX;
+        }
+        .showoldList {
+            min-height: 1000PX;
+        }
+        // .button {
+        //     background-color: #3190e8;
+        //     color: #fff;
+        //     padding: 0.5rem;
+        //     width: 100%;
+        //     margin-top: 0.6rem;
+        // }
         .button {
             background-color: #3190e8;
             color: #fff;
             padding: 0.5rem;
             width: 100%;
             margin-top: 0.6rem;
-            margin-bottom: 2rem;
+            // margin-bottom: 2rem;
         }
         .showList {
             margin-left: 20PX;
@@ -245,6 +283,9 @@
         .showPlan {
             // height: 16rem;
             overflow: scroll;
+            .title {
+                font-size: 16PX;
+            }
         }
         .oldShow {
             // height: 16rem;
@@ -264,6 +305,12 @@
         }
         .viewDate {
             padding: 1rem;
+            background-color: #F5F5F5;
+            input {
+                width: 250PX;
+                padding: 0.5rem;
+                background-color: #fff;
+            }
         }
     }
     .mint-toast {

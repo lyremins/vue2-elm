@@ -13,7 +13,10 @@
                 </div>
             </div>
         </div>
-        <button @click="save()">保存信息</button>
+        <div class="buttonGroup">
+            <button class="planButton" @click="save()">保存信息</button>
+            <button class="planButton" @click="show()">查看关联信息</button>
+        </div>
         <!-- <button @click="show()">查看关联信息</button> -->
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
         <foot-guide></foot-guide>
@@ -204,16 +207,32 @@
         padding-top: 0.35rem;
         font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
-        button {
-            @include sc(.65rem, #fff);
-            font-family: Helvetica Neue, Tahoma, Arial;
-            padding: .28rem .4rem;
-            border: 1px;
-            margin-top: 0.5rem;
-            background-color: #3792e5;
+        .buttonGroup {
+            position: fixed;
+            left: 1px;
+            bottom: 0px;
             width: 100%;
-            margin-bottom: 2rem;
+            background-color: #fff;
+            padding: 10PX;
+            text-align: center;
         }
+        .planButton {
+            background-color: #3190e8;
+            color: #fff;
+            padding: 0.5rem;
+            width: 49%;
+            font-size: 18PX;
+        }
+        // button {
+        //     @include sc(.65rem, #fff);
+        //     font-family: Helvetica Neue, Tahoma, Arial;
+        //     padding: .28rem .4rem;
+        //     border: 1px;
+        //     margin-top: 0.5rem;
+        //     background-color: #3792e5;
+        //     width: 100%;
+        //     margin-bottom: 2rem;
+        // }
         .profileinfopanel-upload {
             display: block;
             opacity: 0;

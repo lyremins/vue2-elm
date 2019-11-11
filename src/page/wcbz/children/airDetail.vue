@@ -1,11 +1,7 @@
 <template>
   	<div class="city_container">
-        <head-top head-title="飞机详情" go-back='true'>
-
-        </head-top>
-        <img :src="imgBaseUrl + airPlaneData.image_path" width="50" height="50" style="padding-top: 20px;overflow: hidden">  
-        <p>机型：<input type="text" v-model="formData.type"></p>
-        <p>飞机型号：<input type="text" v-model="formData.model"></p>
+        <img v-if="airPlaneData.image_path" :src="imgBaseUrl + airPlaneData.image_path" width="50" height="50" style="padding-top: 20px;overflow: hidden">  
+        <p>机型：<input type="text" v-model="formData.model"></p>
         <p>出厂号码：<input type ="text" v-model="formData.code"></p>
         <p>部队编号：<input type ="text" v-model="formData.army_id"></p>
         <p>单位：<input type ="text" v-model="formData.unit"></p>
@@ -26,13 +22,10 @@
         <!-- <router-link to="addAirplane">
             <button class="button">添加飞机信息</button>
         </router-link> -->
-        <button @click="submit()" class="button">修改飞机信息</button>
-        <footGuide></footGuide>
     </div>
 </template>
 
 <script>
-    import headTop from 'src/components/header/head'
     import { getAirplaneById,updateAirplane } from '../../../service/getData';
     import SheetList from '../../../components/common/sheetListAir.vue'
     import mixin from '../../../mixin'
@@ -71,7 +64,6 @@
         mixins: [mixin],
 
         components:{
-            headTop,
             SheetList
         },
 
@@ -104,7 +96,7 @@
 <style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container{
-        padding-top: 2.35rem;
+        padding-top: 0.35rem;
         font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
         input {

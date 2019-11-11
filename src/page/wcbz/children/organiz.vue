@@ -41,9 +41,9 @@
         <div class="inputClass">
             <input placeholder="在此输入单位名称" type="text" v-model="test">
         </div>
-        <div class="buttonBox">
+        <div class="buttonGroup">
             <button @click="save()"  class="button">保存</button>
-            <button @click="saveComponay()" class="button">保存我的单位</button>
+            <button @click="saveComponay()" class="button">设为我的部门</button>
         </div>
     </div>
 </template>
@@ -133,7 +133,7 @@ import { addOrganiz,getOrganiz,updateOrganiz,updatePersonOrganiz } from '../../.
 <style lang="scss" scoped>
     @import 'src/style/mixin';
     .city_container {
-        margin-top: 50PX;
+        margin-top: 20PX;
     }
     .custom-tree-node {
     flex: 1;
@@ -163,6 +163,26 @@ import { addOrganiz,getOrganiz,updateOrganiz,updatePersonOrganiz } from '../../.
       padding: 15PX;
       margin: 10PX auto;
   }
+  .el-tree {
+      background-color: #F5F5F5;
+  }
+  .buttonGroup {
+        position: fixed;
+        left: 1px;
+        bottom: 0px;
+        width: 100%;
+        background-color: #fff;
+        padding: 10PX;
+        text-align: center;
+        }
+    .button {
+        background-color: #3190e8;
+        color: #fff;
+        padding: 0.4rem;
+        width: 45%;
+        margin-top: 0.6rem;
+        font-size: 16px
+    }
 
 
 

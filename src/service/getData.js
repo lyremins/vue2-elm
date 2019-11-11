@@ -529,6 +529,12 @@ export const updateAirplaneCar = data => fetch('/wcbz/updateAirplaneCar', data, 
 
 export const deleteAirplaneCar = ensure_id => fetch('/wcbz/deleteAirplaneCar/' + ensure_id, {}, 'DELETE');
 
+/**
+ * 获取弹药流水
+ */
+
+export const getWqState = () => fetch('/wcbz/getWqState');
+
 
 // /**
 //  * 获取日志数据详细信息

@@ -1,12 +1,34 @@
 <template>
   	<div class="city_container">
-        <p class="title">车辆状态</p>
-        <div class="box">
-        <div class="boxData" v-for="(value,index) in deviceStateData.data">
-            <i class="fa fa-car" aria-hidden="true"></i>
-            <span class="icon wh iconTsk">{{value.state}}</span>
-            <p>{{value.name}}</p>
+        <p @click="showCar1 = !showCar1" class="title">飞行计划保障车辆</p>
+        <div v-show="showCar1" class="box">
+            <div class="boxData" v-for="(value,index) in airData">
+                <i class="fa fa-car" aria-hidden="true"></i>
+                <span class="icon wh iconTsk">{{value[0].state}}</span>
+                <p>{{index}}</p>
+                <p>进场状态：{{value[0].enter}}</p>
+                <p v-if="value[0].taskState">工作状态：{{value[0].taskState}}</p>
+            </div>
         </div>
+        <p @click="showCar2 = !showCar2" class="title">其他保障任务车辆</p>
+        <div v-show="showCar2" class="box">
+            <div class="boxData" v-for="(value,index) in otherData">
+                <i class="fa fa-car" aria-hidden="true"></i>
+                <span class="icon wh iconTsk">{{value[0].state}}</span>
+                <p>{{index}}</p>
+                <p>进场状态：{{value[0].enter}}</p>
+                <p v-if="value[0].taskState">工作状态：{{value[0].taskState}}</p>
+            </div>
+        </div>
+        <p @click="showCar3 = !showCar3" class="title">无任务车辆</p>
+        <div v-show="showCar3" class="box">
+            <div class="boxData" v-for="(value,index) in seData">
+                <i class="fa fa-car" aria-hidden="true"></i>
+                <span class="icon wh iconTsk">{{value.state}}</span>
+                <p>{{value.name}}</p>
+                <p>进场状态：{{value.enter}}</p>
+                <p v-if="value.taskState">工作状态：{{value.taskState}}</p>
+            </div>
         </div>
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
     </div>
@@ -75,7 +97,13 @@
                 totalJcNumber: 0,
                 atotalQlNumber: 0,
                 carJcNumber: 0,
-                carBzNumber: 0
+                carBzNumber: 0,
+                airData: {},
+                otherData: {},
+                seData: {},
+                showCar1: true,
+                showCar2: false,
+                showCar3: false,
             }
         },
 
@@ -118,23 +146,59 @@
                     }
                 });
                 this.ensureData = await getEnsure();
-                const newEnsure = [];
-                const oldEnsure = [];
+                const air = [];
+                const other = [];
+                const total = [];
                 this.ensureData.data.forEach(element => {
-                    if (element.filed7 === this.dayTime) {
+                    console.log(this.dayTime);
+                    if (this.toTimeStamp(element.filed2) === this.toTimeStamp(this.dayTime)) {
                         element.filed3.forEach(i => {
-                            newEnsure[i] || (newEnsure[i] = []);
-                            newEnsure[i].push(i);
-                        });
-                    } else {
-                            element.filed3.forEach(i => {
-                            oldEnsure[i] || (oldEnsure[i] = []);
-                            oldEnsure[i].push(i);
+                            i.car.forEach(element => {
+                                total[element.name] || (total[element.name] = []);
+                                total[element.name].push(element);
+                            });
+                            if (i.content === '飞行计划保障') {
+                                i.car.forEach(element => {
+                                    air[element.name] || (air[element.name] = []);
+                                    air[element.name].push(element);
+                                });
+                            } else {
+                                i.car.forEach(element => {
+                                    other[element.name] || (other[element.name] = []);
+                                    other[element.name].push(element);
+                                });
+                            }
                         });
                     }
+                    // if (element.filed2 === this.dayTime) {
+                    //     element.filed3.forEach(i => {
+                    //         newEnsure[i] || (newEnsure[i] = []);
+                    //         newEnsure[i].push(i);
+                    //     });
+                    // } else {
+                    //         element.filed3.forEach(i => {
+                    //         oldEnsure[i] || (oldEnsure[i] = []);
+                    //         oldEnsure[i].push(i);
+                    //     });
+                    // }
                 });
-                console.log(newEnsure);
-                console.log(oldEnsure);
+                    console.log(total);
+                    this.airData = air;
+                    this.other = other;
+                    this.airData = Object.assign({},air)
+                    this.otherData = Object.assign({},other)
+                    const se_data = [];
+                    this.deviceStateData.data.forEach(element => {
+                       if (!total.hasOwnProperty(element.name))  {
+                           se_data.push(element);
+                       }
+                    });
+                    console.log(se_data);
+                    this.seData = se_data;
+                    this.seData = Object.assign({},se_data)
+
+                // console.log(newEnsure);
+                // console.log(oldEnsure);
             },
             airSelect(event) {
                 this.airname = event.target.value;
@@ -178,7 +242,12 @@
             },
             toEnusre() {
                 this.$router.push('ensure');
-            }
+            },
+            toTimeStamp(time) {
+                time = time.replace(/-/g, '/') // 把所有-转化成/
+                let timestamp = new Date(time).getTime()
+                return timestamp
+            },
         }
     }
 
@@ -229,6 +298,8 @@
             margin-bottom: 0.4rem;
             .boxData {
                 position: relative;
+                width: 50%;
+                text-align: center;
             }
             .icon {
                 position: absolute;
@@ -245,20 +316,20 @@
                 width: 1.6rem;
             }
             p {
-                font-size: 16PX;
+                font-size: 12PX;
                 text-align: center;
             }
         }
         .fa {
             color: #3792e5;
-            font-size: 64pX;
+            font-size: 50PX;
             margin: 0.6rem;
             // position: absolute;
             // left: 30%;
             // top: 40%;
         }
         .title {
-            font-size: 14PX;
+            font-size: 16PX;
             margin: 0.2rem;
         }
         .wh {

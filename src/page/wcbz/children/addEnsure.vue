@@ -2,6 +2,7 @@
     <div class="city_container">
         <!-- <head-top v-show="device !== 'h5'" head-title="添加保障计划" go-back='true'>
         </head-top> -->
+        {{filed3}}
         <form class="loginForm">
             <section class="input_container">
                 <input type="text" placeholder="任务名称" name="filed6" v-model="formData.filed6">
@@ -9,53 +10,54 @@
             <section class="input_container">
                 <mt-field label="保障日期" placeholder="保障日期" type="date" v-model="formData.filed1"></mt-field>
             </section>
-            <div class="deviceBox">
-                <p class="seText">保障类型：</p>
-                <select class="select" v-model="formData.filed2">
-                    <option v-for="v in bzType" :value="v">{{v}}</option>
-                </select>
-            </div>
-            <p @click="showDeviceBox = !showDeviceBox" class="seText">保障车辆选择：</p>
-            <div v-show="showDeviceBox" class="deviceBox">
-                <div v-for="v in carList.data" :value="v.name">
-                    <input v-model="formData.filed3" :value="v.vehicle_id"  class="radio" type="checkbox" :id="i"  />
-                    <label class="carInput" :for="i">保障车辆：{{v.name}}</label>
+            <p @click="showDeviceType= !showDeviceType" class="seText">保障类型：</p>
+            <div v-show="showDeviceType" class="deviceBox">
+                <div v-for="v in bzType" :value="v">
+                    <input v-model="formData.filed3" :value="v"  class="radio" type="checkbox"  />
+                    <label class="carInput" >保障类型：{{v}}</label>
+
+                      <br><p @click="showDeviceBox = !showDeviceBox" class="seText">保障车辆选择：</p>
+                        <div v-show="showDeviceBox" class="deviceBox">
+                            <div v-for="v in carList.data" :value="v.name">
+                                <input v-model="formData.filed3" :value="v.vehicle_id"  class="radio" type="checkbox" :id="i"  />
+                                <label class="carInput" :for="i">保障车辆：{{v.name}}</label>
+                            </div>
+                        </div>
+                        <br>
+                        <p @click="showPersonBox = !showPersonBox" class="seText">人员选择：</p>
+                        <div v-show="showPersonBox" class="deviceBox">
+                            <div v-for="v in bzPerson.data" :value="v.name">
+                                <input v-model="formData.filed4" :value="v.user_name"   class="radio" type="checkbox" :id="i"  />
+                                <label :for="i">保障人员：{{v.user_name}}</label>
+                            </div>
+                        </div>
+                        <br>
+                        <p @click="showPlanBox = !showPlanBox" class="seText">飞行计划：</p>
+                        <div v-show="showPlanBox" class="deviceBox">
+                            <div  v-for="v in planData.data" :value="v.name">
+                                <input v-model="formData.filed5" :value="v.name"   class="radio" type="checkbox" :id="i"  />
+                                <label :for="i">计划名称：{{v.name}}</label>
+                            </div>
+                        </div>
+                        <br>
+                        <p @click="showAirplane = !showAirplane" class="seText">飞机：</p>
+                        <div  v-show="showAirplane" class="deviceBox">
+                            <div  v-for="v in todayAir.data" :value="v.code">
+                                <input :value="v.code"   class="radio" type="checkbox" :id="i"  />
+                                <label :for="i">飞机名称：{{v.code}}</label>
+                            </div>
+                        </div>
+                        <div class="deviceBox">
+                            <p class="seText">输入进场时间：</p>
+                            <input class="enter" v-model="formData.filed7" placeholder="进场时间" type="text">
+                        </div>
+                        <div class="deviceBox">
+                            <p class="seText">输入总人数：</p>
+                            <input class="total" v-model="formData.filed8" placeholder="总人数" type="text">
+                        </div>
                 </div>
-                <!-- <select class="select" v-model="formData.filed3">
-                    <option v-for="v in carList.data" :value="v.name">{{v.name}}</option>
-                </select> -->
             </div>
-            <br>
-            <p @click="showPersonBox = !showPersonBox" class="seText">人员选择：</p>
-            <div v-show="showPersonBox" class="deviceBox">
-                <div v-for="v in bzPerson.data" :value="v.name">
-                    <input v-model="formData.filed4" :value="v.user_name"   class="radio" type="checkbox" :id="i"  />
-                    <label :for="i">保障人员：{{v.user_name}}</label>
-                </div>
-                <!-- <p class="seText">保障人员：</p>
-                <select class="select" v-model="formData.filed4">
-                    <option v-for="v in bzPerson.data" :value="v.user_name">{{v.user_name}}</option>
-                </select> -->
-            </div>
-            <br>
-            <p @click="showPlanBox = !showPlanBox" class="seText">飞行计划：</p>
-            <div v-show="showPlanBox" class="deviceBox">
-                <div v-for="v in airPlaneData.data" :value="v.name">
-                    <input v-model="formData.filed5" :value="v.code"   class="radio" type="checkbox" :id="i"  />
-                    <label :for="i">飞机：{{v.code}}</label>
-                </div>
-                <!-- <select class="select" v-model="formData.filed5">
-                    <option v-for="v in airPlaneData.data" :value="v.code">{{v.code}}</option>
-                </select> -->
-            </div>
-            <div class="deviceBox">
-                <p class="seText">输入进场时间：</p>
-                <input class="enter" v-model="formData.filed7" placeholder="进场时间" type="text">
-            </div>
-            <div class="deviceBox">
-                <p class="seText">输入总人数：</p>
-                <input class="total" v-model="formData.filed8" placeholder="总人数" type="text">
-            </div>
+
         </form>
         <button @click="save()">保存信息</button>
         <!-- <footGuide :device="device"></footGuide> -->
@@ -72,7 +74,8 @@
         getPersonnel,
         getPlan,
         getVehicle,
-        getAirplane
+        getAirplane,
+        getAirplaneToPlan
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
     import mixin from '../../../mixin'
@@ -90,6 +93,7 @@
                     filed7: '',
                     filed8: ''
                 },
+                airData: [],
                 showAlert: false,
                 alertText: '',
                 bzType: [],
@@ -98,15 +102,22 @@
                 planData: {},
                 carList: {},
                 airPlaneData: {},
+                todayAir: {},
                 device: this.$util.getUrlKey('device'),
                 showDeviceBox: false,
                 showPersonBox: false,
-                showPlanBox: false
+                showPlanBox: false,
+                showAirplane: false,
+                showDeviceType: false,
+                dayTime: ''
             }
         },
         mixins: [mixin],
 
         mounted() {
+            var day2 = new Date();
+            day2.setTime(day2.getTime());
+            this.dayTime = day2.getFullYear()+"-" + (day2.getMonth()+1) + "-" + day2.getDate();
             this.init();
         },
 
@@ -171,7 +182,13 @@
                 this.bzCar = config.data[0].carTypeModel.split(",");
                 this.bzPerson = await getPersonnel();
                 this.planData = await getPlan();
-            }
+                this.todayAir = await getAirplaneToPlan();
+            },
+            toTimeStamp(time) {
+                time = time.replace(/-/g, '/') // 把所有-转化成/
+                let timestamp = new Date(time).getTime()
+                return timestamp
+            },
         }
     }
 </script>
@@ -195,7 +212,7 @@
         .seText {
             width: 150PX;
             display: inline-block;
-            padding: 0 .8rem;
+            // padding: 0 .8rem;
             @include sc(.7rem, #666);
         }
         .selectBox {
@@ -212,7 +229,7 @@
         }
         .deviceBox {
             div {
-                padding-left: 40px;
+                // padding-left: 40px;
             }
             select {
                     width: 150px;

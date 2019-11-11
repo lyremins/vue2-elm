@@ -2,7 +2,7 @@
     <div class="city_container">
         <!-- <head-top v-show="device !== 'h5'" head-title="飞机-有售器件关联" go-back='true'>
         </head-top> -->
-        <div class="selectBox">
+        <!-- <div class="selectBox">
 
             <span class="seText">选择飞机：</span>
             <select v-model="selectAirplane">
@@ -10,24 +10,59 @@
             </select>
             <button @click="search()" class="search">查询</button>
             <button @click="searchAll()" class="search">查询全部</button>
-        </div>
-        <div>
-            <table>
-                <tr>
-                    <td>名称</td>
-                    <td>总寿命</td>
-                    <td>余寿</td>
-                    <td>操作</td>
-                </tr>
-                <tr v-for="v in airPlaneData">
-                    <td>{{v.air_code}}_{{v.device_code}}</td>
-                    <td>{{v.zsm}}</td>
-                    <td>{{v.sm}} </td>
-                    <td><span @click="changeNew(v)" class="changeButton" v-show="v.sm <=0">更换</span></td>
-                </tr>
-            </table>
-        </div>
-        <img @click="toLocation()" class="icon" src="../../../images/addIcon.png">
+        </div> -->
+        <div>飞行计划类：</div>
+            <div>
+                <table>
+                    <tr>
+                        <td>名称</td>
+                        <td>总寿命</td>
+                        <td>余寿</td>
+                        <td>操作</td>
+                    </tr>
+                    <tr v-if="planNowData.hasOwnProperty(v.air_code)" v-for="v in airPlaneData" >
+                        <td>{{v.air_code}}_{{v.device_code}}</td>
+                        <td>{{v.zsm}}</td>
+                        <td>{{v.sm}} </td>
+                        <td><span @click="changeNew(v)" class="changeButton" v-show="v.sm <=0">更换</span></td>
+                    </tr>
+                </table>
+            </div>
+        <div>保障任务类：</div>
+            <div>
+                <table>
+                    <tr>
+                        <td>名称</td>
+                        <td>总寿命</td>
+                        <td>余寿</td>
+                        <td>操作</td>
+                    </tr>
+                    <tr v-if="ensureDdd.hasOwnProperty(v.air_code)"  v-for="v in airPlaneData">
+                        <td>{{v.air_code}}_{{v.device_code}}</td>
+                        <td>{{v.zsm}}</td>
+                        <td>{{v.sm}} </td>
+                        <td><span @click="changeNew(v)" class="changeButton" v-show="v.sm <=0">更换</span></td>
+                    </tr>
+                </table>
+            </div>
+        <div>无任务类：</div>
+            <div>
+                <table>
+                    <tr>
+                        <td>名称</td>
+                        <td>总寿命</td>
+                        <td>余寿</td>
+                        <td>操作</td>
+                    </tr>
+                    <tr v-if="!ensureDdd.hasOwnProperty(v.air_code) && !planNowData.hasOwnProperty(v.air_code) "  v-for="v in airPlaneData">
+                        <td>{{v.air_code}}_{{v.device_code}}</td>
+                        <td>{{v.zsm}}</td>
+                        <td>{{v.sm}} </td>
+                        <td><span @click="changeNew(v)" class="changeButton" v-show="v.sm <=0">更换</span></td>
+                    </tr>
+                </table>
+            </div>
+        <!-- <img @click="toLocation()" class="icon" src="../../../images/addIcon.png"> -->
         <alert-tip v-if="showAlert" :showHide="showAlert" @closeTip="closeTip" :alertText="alertText"></alert-tip>
         <!-- <foot-guide :device="device"></foot-guide> -->
     </div>
@@ -39,7 +74,9 @@
     import {
         getAirplane,
         getAirplaneDevice,
-        updateAirplaneDevice
+        updateAirplaneDevice,
+        getPlan,
+        getEnsure
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
     // import footGuide from 'src/components/footer/footer'
@@ -88,7 +125,12 @@
                 airPlane: {},
                 selectAirplane: '',
                 oldPlaneData: {},
-                dayTime: ''
+                planData: {},
+                planNowData: [],
+                dayTime: '',
+                ensureData: {},
+                enterEnsureData: [],
+                ensureDdd: []
             }
         },
 
@@ -111,11 +153,62 @@
                 this.showAlert = false;
             },
             async init() {
+                var day2 = new Date();
+                day2.setTime(day2.getTime());
+                this.dayTime = day2.getFullYear()+"-" + (day2.getMonth()+1) + "-" + day2.getDate();
+
                 this.airPlaneData = await getAirplaneDevice();
                 this.airPlane = await getAirplane();
                 this.airPlaneData = this.airPlaneData.data;
                 this.oldPlaneData = this.airPlaneData;
-                console.log(this.oldPlaneData);
+                this.planData = await getPlan();
+                this.planData.data.forEach(element => {
+                    if (this.toTimeStamp(element.dateTime) === this.toTimeStamp(this.dayTime)) {
+                        element.airData.forEach(ee => {
+                            this.planNowData[ee.airName] || (this.planNowData[ee.airName] = []);
+                                this.planNowData[ee.airName].push(ee);
+                        });
+                    }
+                });
+                this.planNowData = Object.assign({},this.planNowData)
+                console.log(this.planNowData);
+
+                this.ensureData = await getEnsure();
+                this.ensureData.data.forEach(element => {
+                    if (this.toTimeStamp(element.filed2) === this.toTimeStamp(this.dayTime)) {
+                        console.log("element.filed3element.filed3",element.filed3);
+                        element.filed3.forEach(e => {
+                            if (e.content === '飞行计划保障') {
+                                console.log("飞行计划保障",e.plan[0].airData);
+                                this.airPlane.data.forEach(aaa => {
+                                    e.plan[0].airData.forEach(aaaa => {
+                                        console.log("aaa.airName",aaaa.airName);
+                                        if (aaa.code === aaaa.airName) {
+                                            console.log("aaa.airName",aaaa.airName);
+                                            console.log("aaa.code",aaa.code);
+                                            this.enterEnsureData.push(aaa);
+                                        }
+                                    });
+                                });
+                            }
+                            if (e.airplane.length) {
+                                e.airplane.forEach(ee => {
+                                    this.enterEnsureData.push(ee);
+                                });
+                            }
+                        });
+                    }
+                });
+                console.log("^^%%$$$$$$", this.enterEnsureData);
+                const ensureddd = [];
+                this.enterEnsureData.forEach(plan => {
+                    ensureddd[plan.code] || (ensureddd[plan.code] = []);
+                    ensureddd[plan.code].push(plan);
+                });
+                console.log("ensuredddensureddd",ensureddd);
+                this.ensureDdd = ensureddd;
+                this.ensureDdd = Object.assign({},ensureddd)
+                console.log(this.ensureDdd);
             },
             selectOrganiz(name) {
                 console.log(name);
@@ -155,7 +248,12 @@
             },
             toLocation() {
                 this.$router.push('airplaneDevice');
-            }
+            },
+            toTimeStamp(time) {
+                time = time.replace(/-/g, '/') // 把所有-转化成/
+                let timestamp = new Date(time).getTime()
+                return timestamp
+            },
         }
     }
 </script>
@@ -165,16 +263,11 @@
     .city_container {
         min-height: 700PX;
         // padding-top: 2.35rem;
-        // font: 0.6rem/1.75rem "Microsoft YaHei";
+        font: 0.6rem/1.75rem "Microsoft YaHei";
         margin: 0 1rem;
-        select {
-            margin-left: -10px;
-        }
         button {
-            font-size: 16PX;
-            color: #fff;
-            // @include sc(.5rem, #fff);
-            // font-family: Helvetica Neue, Tahoma, Arial;
+            @include sc(.5rem, #fff);
+            font-family: Helvetica Neue, Tahoma, Arial;
             padding: .28rem .4rem;
             border: 1px;
             margin-top: 0.5rem;
@@ -238,13 +331,11 @@
             padding: 0px;
             @include sc(.9rem, #666);
             font-size: 18PX;
-            position: relative;
-            top: 5px;
         }
         .selectBox {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
+                        display: flex;
+    justify-content: space-between;
+    align-items: baseline;
         }
         select {
             width: 3rem;
