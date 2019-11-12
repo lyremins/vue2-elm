@@ -4,7 +4,7 @@
         </head-top> -->
         <div class="selectBox">
 
-            <span class="seText">选择飞机类型：</span>
+            <span class="seText">选择类型：</span>
             <select v-model="selectAirplaneType">
                 <option v-for="v in airType" :value="v">{{v}}</option>
             </select>
