@@ -403,7 +403,7 @@
             toUpload(name,id) {
                 console.log(name,id);
                 // android.toUpLoadData();
-                android.toUpLoadData(name,id);
+                android.toUpLoadData();
             }
         }
     }
