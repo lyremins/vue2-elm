@@ -54,6 +54,7 @@
         <mt-popup
         v-model="popupVisible">
             <div class="viewDate">
+                <p>请选择任务日期：</p>
                 <input placeholder="计划日期" type="date" class="select" v-model="viewTime">
                 <!-- 请选择创建计划的日期：<mt-field placeholder="计划日期" type="date" v-model="viewTime"></mt-field> -->
                 <div @click="toAddPlan()" class="NewButton">创建</div>

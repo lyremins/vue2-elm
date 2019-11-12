@@ -4,10 +4,6 @@
         <input v-model="formData.name" placeholder="计划名称" class="select" type="text">
         <p>计划日期：</p>
         <input placeholder="请输入出厂日期" type="date" class="select" v-model="formData.dateTime">
-        <p>输入总人数：</p>
-        <input v-model="formData.totalNumber" placeholder="总人数" class="select" type="number">
-        <p>默认人数</p>
-        <span>{{reckon}}</span>
         <p>输入进场时间：</p>
         <!-- <input v-model="formData.approachTime" placeholder="进场时间" class="select" type="text"> -->
         <input placeholder="请输入进场时间" type="time" class="select" v-model="formData.approachTime">
@@ -54,6 +50,10 @@
                 </div>
             </div>
         </div>
+        <p>输入总人数：</p>
+        <input v-model="formData.totalNumber" placeholder="总人数" class="select" type="number">
+        <p>默认人数</p>
+        <span>{{reckon}}</span>
 
         <mt-popup
             v-model="popupVisible"
@@ -250,7 +250,7 @@
                                 console.log('*****************',this.airPlaneData.data[index].xd);
                                 console.log('********',element.xd);
                                 // this.airPlaneData.data[index].xd.forEach(ss => {
-                                //     if (ss.airplaneAmmo_id ===)
+                                //     if (ss.airplaneAmmo_id === element.)
                                 // });
                                 return ;
                             }

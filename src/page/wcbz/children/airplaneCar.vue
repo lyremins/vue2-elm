@@ -106,6 +106,7 @@
                                     airplane_type:  elements.model,
                                     car_type:  element.model,
                                     lc:  element.mileage,
+                                    model: elements.model
                                 }
                                 data.push(l)
                             }

@@ -110,6 +110,7 @@
                         elements.device.forEach(element => {
                             if (element.isCheck) {
                                 let l = {
+                                    model: elements.model,
                                     air_code: elements.code,
                                     device_code:  element.filed1,
                                     zsm:  element.filed6,

@@ -4,13 +4,19 @@
         </head-top> -->
         <div class="selectBox">
 
-            <span class="seText">选择飞机：</span>
-            <select v-model="selectAirplane">
-                <option v-for="v in airPlane.data" :value="v.code">{{v.code}}</option>
+            <span class="seText">选择飞机类型：</span>
+            <select v-model="selectAirplaneType">
+                <option v-for="v in airType" :value="v">{{v}}</option>
             </select>
             <button @click="search()" class="search">查询</button>
             <button @click="searchAll()" class="search">查询全部</button>
         </div>
+            <div class="selectType" v-show="selectAirplaneType">
+                <span class="seText">选择飞机编号：</span>
+                <select v-model="selectAirplane">
+                    <option v-for="v in airPlane.data" :value="v.code">{{v.code}}</option>
+                </select>
+            </div>
         <div>
             <table>
                 <tr>
@@ -39,7 +45,8 @@
     import {
         getAirplane,
         getAirplaneDevice,
-        updateAirplaneDevice
+        updateAirplaneDevice,
+        getConfig
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
     // import footGuide from 'src/components/footer/footer'
@@ -88,12 +95,24 @@
                 airPlane: {},
                 selectAirplane: '',
                 oldPlaneData: {},
-                dayTime: ''
+                dayTime: '',
+                airType:[],
+                selectAirplaneType:'',
+                ssData: []
             }
         },
 
         mounted() {
             this.init();
+        },
+        watch: {
+            selectAirplane(v) {
+                if (v) {
+                    this.airPlaneData = this.ssData.filter(
+                        item => item.air_code === this.selectAirplane
+                    )
+                }
+            }
         },
 
         components: {
@@ -115,6 +134,9 @@
                 this.airPlane = await getAirplane();
                 this.airPlaneData = this.airPlaneData.data;
                 this.oldPlaneData = this.airPlaneData;
+
+                const config = await getConfig()
+                this.airType = config.data[0].airTypeModel.split(",");
                 console.log(this.oldPlaneData);
             },
             selectOrganiz(name) {
@@ -143,10 +165,14 @@
                 this.alertText = '更换成功';
             },
             search() {
-                console.log(this.oldPlaneData);
+                console.log("222222", this.oldPlaneData);
+                // this.airPlaneData = this.oldPlaneData.filter(
+                //     item => item.air_code === this.selectAirplane
+                // )
                 this.airPlaneData = this.oldPlaneData.filter(
-                    item => item.air_code === this.selectAirplane
+                    item => item.model === this.selectAirplaneType
                 )
+                this.ssData = this.airPlaneData;
                 console.log(this.airPlaneData);
 
             },
@@ -256,6 +282,9 @@
             bottom: 10%;
             right: 7%;
         }
+            .selectType {
+                height: 60PX;
+            }
     }
 
     .loginForm {

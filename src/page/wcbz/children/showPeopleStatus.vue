@@ -5,7 +5,7 @@
             <div class="boxData" >
             <div v-for="v in enterArrayData[0]">
                 <!-- {{v}} -->
-                <div @click="toflyDetail(value.airplane_id)" v-for="(value,index) in airPlaneData.data" v-if="value.code === v.airName">
+                <div   v-for="(value,index) in airPlaneData.data" v-if="value.code === v.airName">
                     <div class="listBox">
                         <!-- <img class="flyIcon" src="../../../images/flyIcon.png">
                         <span class="icon iconTsk" :class="{'wh': value.state === '完好',
@@ -28,7 +28,7 @@
                     <div class="personList">
                         <div>飞机编号：{{value.code}}</div>
                         <!-- <p>机组人员</p> -->
-                        <div v-for="v in pp_name[value.code]">
+                        <div @click="toUpload(v.user_name,v.person_id)" v-for="v in pp_name[value.code]">
                             人员名称：{{v.user_name}}
                         </div>
                     </div>
@@ -41,7 +41,7 @@
             <div class="boxData" >
             <div
                 v-for="(value,index) in ensureDdd"
-                @click="toflyDetail(value.airplane_id)" >
+                  >
                     <!-- {{v.airName}} - {{value.code}} -->
                     <div>
                     <div class="listBox">
@@ -64,7 +64,7 @@
                     </div>
                     <div>
                         <div>飞机编号：{{value[0].code}}</div>
-                        <div v-for="v in pp_name[value[0].code]">
+                        <div @click="toUpload(v.user_name,v.person_id)" v-for="v in pp_name[value[0].code]">
                             {{v.user_name}}
                         </div>
                     </div>
@@ -78,7 +78,7 @@
             <div class="boxData" >
             <div
                 v-for="(value,index) in noData"
-                @click="toflyDetail(value.airplane_id)" >
+                  >
                     <!-- {{v.airName}} - {{value.code}} -->
                     <div>
                     <div class="listBox">
@@ -101,7 +101,7 @@
                     </div>
                     <div>
                         <div style="">飞机编号：{{value.code}}</div>
-                        <div v-for="v in pp_name[value.code]">
+                        <div @click="toUpload(v.user_name,v.person_id)" v-for="v in pp_name[value.code]">
                             人员名称：{{v.user_name}}
                         </div>
                     </div>
@@ -400,6 +400,11 @@
                 let timestamp = new Date(time).getTime()
                 return timestamp
             },
+            toUpload(name,id) {
+                console.log(name,id);
+                // android.toUpLoadData();
+                android.toUpLoadData(name,id);
+            }
         }
     }
 

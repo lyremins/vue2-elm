@@ -27,10 +27,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="planTotalNumber" v-show="value.content === '飞行计划保障'">
+                <!-- <div class="planTotalNumber" v-show="value.content === '飞行计划保障'">
                     总人数: {{totalNumber}}
 
-                </div>
+                </div> -->
                 <div v-show="value.content != '飞行计划保障'">
                     <p class="subTitle">人员类型选择：</p>
                     <div>

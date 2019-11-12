@@ -2,15 +2,23 @@
     <div class="city_container">
         <!-- <head-top head-title="飞机-车辆关联" go-back='true'>
         </head-top> -->
-        <div class="selectBox">
+            <div class="selectBox">
 
-            <span class="seText">选择飞机：</span>
-            <select v-model="selectAirplane">
-                <option v-for="v in airPlane.data" :value="v.code">{{v.code}}</option>
-            </select>
-            <button @click="search()" class="search">查询</button>
-            <button @click="searchAll()" class="search">查询全部</button>
-        </div>
+                <span class="seText">选择飞机类型：</span>
+                <select v-model="selectAirplaneType">
+                    <option v-for="v in airType" :value="v">{{v}}</option>
+                </select>
+                <button @click="search()" class="search">查询</button>
+                <button @click="searchAll()" class="search">查询全部</button>
+            </div>
+            <div v-show="selectAirplaneType">
+                    <div class="selectType">
+                <span class="seText">飞机编号：</span>
+                <select v-model="selectAirplane">
+                    <option v-for="v in airPlane.data" :value="v.code">{{v.code}}</option>
+                </select>
+                </div>
+            </div>
         <div>
             <table>
                 <tr>
@@ -38,7 +46,8 @@
     import alertTip from 'src/components/common/alertTip'
     import {
         getAirplaneCar,
-        getAirplane
+        getAirplane,
+        getConfig
     } from '../../../service/getData';
     import {imgBaseUrl} from 'src/config/env'
     import footGuide from 'src/components/footer/footer'
@@ -85,12 +94,24 @@
                 device: [],
                 airplaneIndex: '',
                 oldPlaneData: {},
-                selectAirplane: ''
+                selectAirplane: '',
+                airType:[],
+                selectAirplaneType:'',
+                ssData: []
             }
         },
 
         mounted() {
             this.init();
+        },
+        watch: {
+            selectAirplane(v) {
+                if (v) {
+                    this.airPlaneData = this.ssData.filter(
+                        item => item.air_code === this.selectAirplane
+                    )
+                }
+            }
         },
 
         components: {
@@ -112,6 +133,10 @@
                 this.airPlaneData = await getAirplaneCar();
                 this.airPlaneData = this.airPlaneData.data;
                 this.oldPlaneData = this.airPlaneData;
+
+                const config = await getConfig()
+                this.airType = config.data[0].airTypeModel.split(",");
+                console.log(this.oldPlaneData);
             },
             selectOrganiz(name) {
                 console.log(name);
@@ -132,10 +157,14 @@
                 this.$router.push('airplaneCar');
             },
             search() {
-                console.log(this.oldPlaneData);
+                console.log("222222", this.oldPlaneData);
+                // this.airPlaneData = this.oldPlaneData.filter(
+                //     item => item.air_code === this.selectAirplane
+                // )
                 this.airPlaneData = this.oldPlaneData.filter(
-                    item => item.air_code === this.selectAirplane
+                    item => item.model === this.selectAirplaneType
                 )
+                this.ssData = this.airPlaneData;
                 console.log(this.airPlaneData);
 
             },
@@ -242,6 +271,9 @@
             bottom: 10%;
             right: 7%;
         }
+        .selectType {
+                height: 60PX;
+            }
     }
 
     .loginForm {
