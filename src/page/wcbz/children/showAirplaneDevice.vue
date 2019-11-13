@@ -2,20 +2,20 @@
     <div class="city_container">
         <!-- <head-top v-show="device !== 'h5'" head-title="飞机-有售器件关联" go-back='true'>
         </head-top> -->
-        <div class="selectBox">
+        <div class="selectType">
 
-            <span class="seText">选择类型：</span>
+            <span class="seText">选择飞机类型：</span>
             <select v-model="selectAirplaneType">
                 <option v-for="v in airType" :value="v">{{v}}</option>
             </select>
             <button @click="search()" class="search">查询</button>
-            <button @click="searchAll()" class="search">查询全部</button>
         </div>
             <div class="selectType" v-show="selectAirplaneType">
                 <span class="seText">选择飞机编号：</span>
                 <select v-model="selectAirplane">
                     <option v-for="v in airPlane.data" :value="v.code">{{v.code}}</option>
                 </select>
+                <button @click="searchAll()" class="search">查询全部</button>
             </div>
         <div>
             <table>

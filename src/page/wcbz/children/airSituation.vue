@@ -1,11 +1,11 @@
 <template>
   	<div class="city_container">
-        <p @click="showJoinPlan = !showJoinPlan" class="title1">参加计划的飞机：</p>
+        <p @click="showJoinPlan = !showJoinPlan" class="title1">今日参训飞机：</p>
         <div v-show="showJoinPlan" class="box">
             <div class="boxData" >
-            <div v-for="v in enterArrayData[0]">
+            <div  v-for="v in enterArrayData[0]">
                 <!-- {{v}} -->
-                <div @click="toflyDetail(value.airplane_id)" v-for="(value,index) in airPlaneData.data" v-if="value.code === v.airName">
+                <div class="list" @click="toflyDetail(value.airplane_id)" v-for="(value,index) in airPlaneData.data" v-if="value.code === v.airName">
                     <div class="listBox">
                         <img class="flyIcon" src="../../../images/flyIcon.png">
                         <span class="icon iconTsk" :class="{'wh': value.state === '完好',
@@ -29,14 +29,14 @@
                 </div>
             </div>
         </div>
-        <p @click="showEnsure = !showEnsure" class="title1">参加保障任务的飞机：</p>
+        <p @click="showEnsure = !showEnsure" class="title1">今日保障飞机：</p>
         <div v-show="showEnsure" class="box">
             <div class="boxData" >
             <div
                 v-for="(value,index) in ensureDdd"
                 @click="toflyDetail(value.airplane_id)" >
                     <!-- {{v.airName}} - {{value.code}} -->
-                    <div>
+                    <div class="list">
                     <div class="listBox">
                         <img class="flyIcon" src="../../../images/flyIcon.png">
                         <span class="icon iconTsk" :class="{'wh': value.state === '完好',
@@ -59,10 +59,10 @@
             </div>
             </div>
         </div>
-        <p @click="showJoinNoPlan = !showJoinNoPlan" class="title1">无任务的飞机：</p>
+        <p @click="showJoinNoPlan = !showJoinNoPlan" class="title1">今日无任务飞机： {{noData.length}}</p>
         <div v-show="showJoinNoPlan" class="box">
             <div class="boxData" >
-            <div
+            <div class="list"
                 v-for="(value,index) in noData"
                 @click="toflyDetail(value.airplane_id)" >
                     <!-- {{v.airName}} - {{value.code}} -->
@@ -425,8 +425,13 @@
                 position: relative;
                 display: flex;
                 flex-wrap: wrap;
-                div {
-                    width: 7rem;
+                .list {
+                    width: 6rem;
+                    background-color: #e6e6e6;
+                    margin-right: 20PX;
+                    margin-bottom: 20PX;
+                    padding: 10PX;
+
                 }
                 // width: 45%;
             }

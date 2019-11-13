@@ -166,6 +166,16 @@ import { addOrganiz,getOrganiz,updateOrganiz,updatePersonOrganiz } from '../../.
   .el-tree {
       background-color: #F5F5F5;
   }
+  .el-tree-node {
+    .is-current {
+        background-color: red;
+    }
+  }
+  .el-tree-node__content {
+      &:hover {
+          background-color: red!important;
+      }
+  }
   .buttonGroup {
         position: fixed;
         left: 1px;

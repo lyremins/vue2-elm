@@ -20,7 +20,7 @@
                 <p v-if="value[0].taskState">工作状态：{{value[0].taskState}}</p>
             </div>
         </div>
-        <p @click="showCar3 = !showCar3" class="title">无任务车辆</p>
+        <p @click="showCar3 = !showCar3" class="title">今日无任务车辆 {{se_data_number}}</p>
         <div v-show="showCar3" class="box">
             <div class="boxData" v-for="(value,index) in seData">
                 <i class="fa fa-car" aria-hidden="true"></i>
@@ -104,6 +104,7 @@
                 showCar1: true,
                 showCar2: false,
                 showCar3: false,
+                se_data_number: 0
             }
         },
 
@@ -191,6 +192,7 @@
                     this.deviceStateData.data.forEach(element => {
                        if (!total.hasOwnProperty(element.name))  {
                            se_data.push(element);
+                           this.se_data_number ++;
                        }
                     });
                     console.log(se_data);
@@ -298,8 +300,12 @@
             margin-bottom: 0.4rem;
             .boxData {
                 position: relative;
-                width: 50%;
+                width: 43%;
                 text-align: center;
+                background-color: #e6e6e6;
+                margin-right: 20PX;
+                margin-bottom: 20PX;
+                padding: 10px;
             }
             .icon {
                 position: absolute;
