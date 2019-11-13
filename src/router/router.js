@@ -41,6 +41,7 @@ const showAirplaneAmmo= r => require.ensure([], () => r(require('../page/wcbz/ch
 const showAirplaneAmmoState= r => require.ensure([], () => r(require('../page/wcbz/children/showAirplaneAmmoState')), 'showAirplaneAmmoState')
 const showAirplaneCar= r => require.ensure([], () => r(require('../page/wcbz/children/showAirplaneCar')), 'showAirplaneCar')
 const editPlan= r => require.ensure([], () => r(require('../page/wcbz/children/editPlan')), 'editPlan')
+const analys= r => require.ensure([], () => r(require('../page/wcbz/children/analys')), 'analys')
 
 
 export default [{
@@ -215,6 +216,10 @@ export default [{
         {
             path: 'showAirplaneAmmoState',
             component: showAirplaneAmmoState
+        },
+        {
+            path: 'analys',
+            component: analys
         },
     ]
 }]
