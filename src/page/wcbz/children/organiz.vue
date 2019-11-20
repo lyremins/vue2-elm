@@ -140,16 +140,18 @@ import { addOrganiz,getOrganiz,updateOrganiz,updatePersonOrganiz } from '../../.
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 18px;
     padding-right: 8PX;
   }
   .inputClass {
       text-align: center;
       input {
-          width: 80%;
+          width: 100%;
           height: 30PX;
           border: 1px solid #e8e8e8;
-          padding: 5PX;
+          padding: 20PX;
+          margin-top: 20PX;
+          font-size: 16PX;
       }
   }
   .buttonBox {
@@ -167,22 +169,16 @@ import { addOrganiz,getOrganiz,updateOrganiz,updatePersonOrganiz } from '../../.
       background-color: #F5F5F5;
   }
   .el-tree-node {
-    .is-current {
-        background-color: red;
-    }
   }
-  .el-tree-node__content {
-      &:hover {
-          background-color: red!important;
-      }
+  .el-button--mini {
+      font-size: 16PX;
   }
   .buttonGroup {
         position: fixed;
         left: 1px;
         bottom: 0px;
         width: 100%;
-        background-color: #fff;
-        padding: 10PX;
+        padding: 5PX;
         text-align: center;
         }
     .button {

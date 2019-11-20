@@ -44,4 +44,12 @@
         .mint-field .mint-cell-value {
             width: 300PX;
         }
+    .is-current {
+        // border: 1px solid #3891e4;
+        color: #3891e4;
+    }
+    .el-tree-node__content {
+    border-bottom: 1px solid #e6e6e6;
+    padding: 15px;
+  }
 </style>
