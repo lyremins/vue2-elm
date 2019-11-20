@@ -45,8 +45,13 @@
             width: 300PX;
         }
     .is-current {
+        background-color: #3891e4;
         // border: 1px solid #3891e4;
-        color: #3891e4;
+        color: #fff;
+          .el-button--mini {
+      font-size: 16PX;
+      color: #fff;
+  }
     }
     .el-tree-node__content {
     border-bottom: 1px solid #e6e6e6;
